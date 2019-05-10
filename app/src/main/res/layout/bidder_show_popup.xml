@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                   xmlns:tools="http://schemas.android.com/tools" android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <ImageView
+            android:layout_width="100dp"
+            android:layout_height="100dp" app:srcCompat="@drawable/ic_menu_share"
+            android:id="@+id/item_image_bidder_view"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginTop="16dp" app:layout_constraintEnd_toEndOf="parent"
+    />
+    <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/item_name_bidder_view"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="16dp" app:layout_constraintTop_toBottomOf="@+id/item_image_bidder_view"/>
+    <TextView
+            android:text="Min Bid Amount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView9" app:layout_constraintStart_toStartOf="parent" android:layout_marginLeft="32dp"
+            android:layout_marginStart="32dp"
+            app:layout_constraintTop_toBottomOf="@+id/item_name_bidder_view" android:layout_marginTop="16dp"/>
+    <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/min_bid_amount_bidderView" app:layout_constraintStart_toStartOf="parent" android:layout_marginLeft="32dp"
+            android:layout_marginStart="32dp" android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/textView9"/>
+    <TextView
+            android:text="Highest Bid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView11" android:layout_marginEnd="32dp" android:layout_marginRight="32dp"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toBottomOf="@+id/item_name_bidder_view"
+            android:layout_marginTop="16dp"/>
+    <TextView
+            android:text="TextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/max_bid_amount_bidderView" android:layout_marginEnd="32dp" android:layout_marginRight="32dp"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/textView11"/>
+    <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/bid_value_bidder_view" app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/min_bid_amount_bidderView" android:layout_marginTop="24dp"
+            android:hint="Bid value"/>
+    <Button
+            android:text="Bid Now"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/apply_bid" android:layout_marginEnd="24dp" android:layout_marginRight="24dp"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@+id/bid_value_bidder_view" android:layout_marginLeft="24dp"
+            android:layout_marginStart="24dp"/>
+    <Button
+            android:text="-"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/minus_controller" android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@+id/min_bid_amount_bidderView"
+            app:layout_constraintEnd_toStartOf="@+id/bid_value_bidder_view"
+            android:layout_marginEnd="4dp" android:layout_marginRight="4dp"/>
+    <Button
+            android:text="+"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:id="@+id/plus_controller" android:layout_marginLeft="4dp" android:layout_marginStart="4dp"
+            app:layout_constraintStart_toEndOf="@+id/bid_value_bidder_view" android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@+id/max_bid_amount_bidderView"/>
+</androidx.constraintlayout.widget.ConstraintLayout>

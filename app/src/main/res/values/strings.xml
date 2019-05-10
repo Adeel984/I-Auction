@@ -1,0 +1,77 @@
+<resources>
+    <string name="app_name">I-Auction</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="register_name">Name</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="bidder">Bidder</string>
+    <string name="auctioner">Auctioner</string>
+    <string name="log_in">Log in</string>
+    <string name="new_tto">New to I-Auction? Sign up here</string>
+    <string name="create">Create</string>
+    <string name="title_activity_dashboard">DashboardActivity</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Android Studio</string>
+    <string name="nav_header_subtitle">android.studio@android.com</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="menu_home">Home</string>
+    <string name="menu_gallery">Gallery</string>
+    <string name="menu_slideshow">Slideshow</string>
+    <string name="menu_tools">Tools</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_send">Send</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="all_items">All Items</string>
+    <string name="led">LED</string>
+    <string name="mobile_phones">Mobile Phones</string>
+    <string name="my_items">My Items</string>
+    <string name="post_item">Post item</string>
+    <string name="category">Please select Category</string>
+    <string name="category_item">Category</string>
+    <string name="brand">Brand</string>
+    <string name="description">Description</string>
+    <string name="end_time">End time</string>
+    <string name="comapny_name">Comapny Name</string>
+    <string name="designation_rank">Designation / Rank</string>
+    <string name="about_company">About Company</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
+
+    // Items Name array
+    <string-array name="item_name_array">
+        <item>---</item>
+        <item>Mobiles</item>
+        <item>Laptops</item>
+        <item>LED</item>
+        <item>Air Conditioners</item>
+        <item>Refrigerators</item>
+    </string-array>
+    //Category items Array
+    <string-array name="category_items_array">
+        <item>---</item>
+        <item>Hand Set</item>
+        <item>Home Appliances</item>
+        <item>Laptops</item>
+    </string-array>
+
+    //Item Brands Category
+    <string-array name="item_brand_array">
+        <item>---</item>
+        <item>Samsung</item>
+        <item>IPhone</item>
+        <item>LG</item>
+        <item>Nokia</item>
+        <item>Dell</item>
+        <item>Lenovo</item>
+        <item>Panasonic</item>
+        <item>Philips</item>
+        <item>Orient</item>
+        <item>Haier</item>
+    </string-array>
+</resources>

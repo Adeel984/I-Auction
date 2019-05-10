@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:showIn="navigation_view">
+
+    <group android:id="@+id/bidder_menu"
+           android:visible="false"
+           android:checkableBehavior="single">
+        <item
+                android:id="@+id/bidder_items"
+                android:icon="@drawable/ic_menu_camera"
+                android:title="@string/all_items"/>
+        <item
+                android:id="@+id/cell_phones"
+                android:icon="@drawable/ic_menu_camera"
+                android:title="@string/mobile_phones"/>
+        <item
+                android:id="@+id/Led"
+                android:icon="@drawable/ic_menu_camera"
+                android:title="@string/led">
+        </item>
+    </group>
+
+    <!--Auctioner Menu -->
+    <group android:id="@+id/auctioner_menu"
+           android:visible="false"
+            android:checkableBehavior="single">
+        <item
+                android:id="@+id/auctioner_items"
+                android:icon="@drawable/ic_menu_camera"
+                android:title="@string/my_items"/>
+        <item
+                android:id="@+id/post_item"
+                android:icon="@drawable/ic_menu_gallery"
+                android:title="@string/post_item"/>
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item
+                    android:id="@+id/nav_share"
+                    android:icon="@drawable/ic_menu_share"
+                    android:title="@string/menu_share"/>
+            <item
+                    android:id="@+id/nav_send"
+                    android:icon="@drawable/ic_menu_send"
+                    android:title="@string/menu_send"/>
+        </menu>
+    </item>
+
+</menu>

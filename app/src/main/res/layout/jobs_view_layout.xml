@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <androidx.cardview.widget.CardView android:layout_width="match_parent"
+                                       android:layout_height="wrap_content">
+        <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
+                                                           android:layout_height="match_parent">
+
+
+            <ImageView
+                    android:layout_width="100dp"
+                    android:id="@+id/item_image_view"
+                    android:layout_height="100dp" app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" android:layout_marginTop="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp" app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginBottom="8dp"/>
+            <TextView
+                    android:id="@+id/item_name_view"
+                    android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintStart_toEndOf="@+id/item_image_view" android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"/>
+            <TextView
+                    android:text="TextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/item_desc_view"
+                    app:layout_constraintTop_toBottomOf="@+id/item_name_view" android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp" app:layout_constraintStart_toEndOf="@+id/item_image_view"/>
+            <TextView
+                    android:text="TextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/item_brand_view" android:layout_marginTop="8dp"
+                    app:layout_constraintTop_toBottomOf="@+id/item_desc_view"
+                    app:layout_constraintStart_toEndOf="@+id/item_image_view" android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"/>
+            <TextView
+                    android:text="TextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/bid_amount_view"
+                    android:layout_marginTop="8dp"
+                    app:layout_constraintTop_toBottomOf="@+id/item_brand_view"
+                    android:layout_marginLeft="8dp" android:layout_marginStart="8dp"
+                    app:layout_constraintStart_toEndOf="@+id/item_image_view"/>
+
+            <!--Buttons for Auctioner -->
+            <Button
+                    android:text="Close"
+                    android:textStyle="bold"
+                    android:textColor="@color/transparent"
+                    android:layout_width="wrap_content"
+                    android:visibility="gone"
+                    android:background="@drawable/button_auctioner_disable"
+                    android:layout_height="43dp"
+                    android:id="@+id/close_bid_btn" android:layout_marginEnd="8dp" android:layout_marginRight="8dp"
+                    app:layout_constraintEnd_toEndOf="parent" app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginBottom="8dp"/>
+
+            <Button
+                    android:text="Re-bid"
+                    android:textStyle="bold"
+                    android:textColor="@color/transparent"
+                    android:layout_width="wrap_content"
+                    android:visibility="gone"
+                    android:background="@drawable/button_apply_for_bid"
+                    android:layout_height="43dp"
+                    android:id="@+id/re_bid_btn" android:layout_marginEnd="8dp" android:layout_marginRight="8dp"
+                    app:layout_constraintEnd_toEndOf="parent" app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginBottom="8dp"/>
+            <!--Buttons for Bidder -->
+            <Button
+                    android:text="Apply Bid"
+                    android:textStyle="bold"
+                    android:textColor="@color/transparent"
+                    android:layout_width="wrap_content"
+                    android:visibility="gone"
+                    android:background="@drawable/button_apply_for_bid"
+                    android:layout_height="43dp"
+                    android:id="@+id/bid_now_view" android:layout_marginEnd="8dp" android:layout_marginRight="8dp"
+                    app:layout_constraintEnd_toEndOf="parent" app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginBottom="8dp"/>
+            <Button
+                    android:text="Withdraw from Bid"
+                    android:textStyle="bold"
+                    android:textColor="@color/transparent"
+                    android:layout_width="wrap_content"
+                    android:visibility="gone"
+                    android:background="@drawable/button_auctioner_disable"
+                    android:layout_height="43dp"
+                    android:id="@+id/withdraw_bid_view" android:layout_marginEnd="8dp" android:layout_marginRight="8dp"
+                    app:layout_constraintEnd_toEndOf="parent" app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginBottom="8dp"/>
+            <TextView
+                    android:text="TextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/item_status_view" android:layout_marginEnd="8dp" android:layout_marginRight="8dp"
+                    app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent"
+                    android:layout_marginTop="8dp"/>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+</RelativeLayout>
