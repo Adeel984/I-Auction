@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/bidder_image_row"
+            android:layout_width="80dp" android:layout_height="80dp"/>
+    <TextView
+            android:id="@+id/bidder_name_row"
+            android:layout_width="wrap_content"
+            android:layout_toRightOf="@id/bidder_image_row"
+            android:layout_marginLeft="20dp"
+            android:layout_height="wrap_content" android:layout_marginStart="20dp"/>
+    <TextView
+            android:id="@+id/bidder_bidAmount_row"
+            android:layout_alignParentEnd="true"
+            android:layout_marginRight="20dp"
+            android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"/>
+</RelativeLayout>

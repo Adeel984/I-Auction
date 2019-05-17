@@ -5,5 +5,9 @@ class Users(
     var userName: String = "",
     var email: String = "",
     var accType: Int? = null,
-    var imageUri: String? = ""
-)
+    var imageUri: String? = "")
+{
+    override fun toString(): String {
+        return "Users(uid='$uid', userName='$userName', email='$email', accType=$accType, imageUri=$imageUri)"
+    }
+}

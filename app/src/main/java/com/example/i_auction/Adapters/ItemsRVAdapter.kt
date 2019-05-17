@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.i_auction.Models.Items
 import com.example.i_auction.Models.Users
@@ -85,6 +86,9 @@ class ItemsRVAdapter(var ctx:Context,var itemsList:ArrayList<Items>, var viewCli
         holder.re_bid.setOnClickListener {
             viewClick(it,position)
         }
+        holder.cardView.setOnClickListener {
+            viewClick(it,position)
+        }
     }
 
 //    private fun getAppliedUsers(position: Int) : Boolean {
@@ -120,6 +124,7 @@ class ItemsRVAdapter(var ctx:Context,var itemsList:ArrayList<Items>, var viewCli
         val itemImage:ImageView = view.findViewById(R.id.item_image_view)
         val bidAmount:TextView = view.findViewById(R.id.bid_amount_view)
         val itemStatus:TextView = view.findViewById(R.id.item_status_view)
+        val cardView:CardView = view.findViewById(R.id.item_cardView)
         // Auctioner Buttons
         val closeBid:Button = view.findViewById(R.id.close_bid_btn)
         val re_bid:Button = view.findViewById(R.id.re_bid_btn)
