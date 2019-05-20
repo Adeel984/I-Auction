@@ -57,19 +57,7 @@ class mySharedPref {
         return saveduser
     }
 
-    fun getUsersFromFirebasefireStore(uid: String, nameString: String): Users? {
-        var user: Users? = null
-        val dbRef = FirebaseFirestore.getInstance()
-        dbRef.collection("Users").document("UserData")
-            .collection(nameString).document(uid)
-            .get()
-            .addOnSuccessListener { documentSnapshot ->
-                if (documentSnapshot != null && documentSnapshot.exists()) {
-                    user = documentSnapshot.toObject(Users::class.java)
-                }
-            }
-        return user
-    }
+
 
     fun getAlluserFromDb(ctx: Context, UserTypeString: String): ArrayList<Users> {
         val userList = ArrayList<Users>()
