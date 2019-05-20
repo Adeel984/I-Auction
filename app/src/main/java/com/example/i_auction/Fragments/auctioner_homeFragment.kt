@@ -27,9 +27,11 @@ import com.google.firebase.firestore.QuerySnapshot
 
 class auctioner_homeFragment : Fragment() {
 
-    lateinit var adapter: ItemsRVAdapter
+    private var madapter: BiddersAdapter? = null
+   private lateinit var adapter: ItemsRVAdapter
     var itemList: ArrayList<Items> = ArrayList()
-    val userId = FirebaseAuth.getInstance().currentUser?.uid
+   private val userId = FirebaseAuth.getInstance().currentUser?.uid
+    val userList = ArrayList<Users?>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -53,15 +55,24 @@ class auctioner_homeFragment : Fragment() {
     }
 
     private fun showBids(position: Int) {
-        appliedUsersList.putAll(itemList[position].bidded_users!!)
-        val userList = ArrayList<Users?>()
+        appliedUsersList.clear()
+        userList.clear()
+       appliedUsersList.putAll(itemList[position].bidded_users!!)
+//        Log.d("position",position.toString())
+//        Log.d("itemCount", appliedUsersList.size.toString())
+
         var counter = 0
         appliedUsersList.keys.forEach { uid ->
-            val user = mySharedPref().getUsersFromFirebasefireStore(uid, NameEnums.Bidder.names)
-            if(user !=null) {
-                userList.add(user)
-                Toast.makeText(activity!!,user.toString(),Toast.LENGTH_SHORT).show()
-            } else Toast.makeText(activity!!,"No user",Toast.LENGTH_SHORT).show()
+         getUsersFromFirebasefireStore(uid, NameEnums.Bidder.names)
+           // userList.add(user)
+
+           // if(user.uid.isEmpty()) Toast.makeText(activity!!,"No user",Toast.LENGTH_SHORT).show()
+         //   else {
+             //   userList.add(user)
+          //   //   madapter!!.notifyDataSetChanged()
+          //      Toast.makeText(activity!!,user.toString(),Toast.LENGTH_SHORT).show()
+
+            //(}
             counter++
         }
         val dialog = Dialog(activity!!)
@@ -75,11 +86,9 @@ class auctioner_homeFragment : Fragment() {
             bidsArray.add(bidAmount)
         }
         recyclerView.layoutManager = LinearLayoutManager(activity)
-        val adapter = BiddersAdapter(activity!!, userList, bidsArray)
-        recyclerView.adapter = adapter
-        adapter.notifyDataSetChanged()
+        madapter = BiddersAdapter(activity!!, userList, bidsArray)
+        recyclerView.adapter = madapter
         dialog.show()
-
     }
 
     private fun openOrCloseBidItem(itemSold: Boolean, position: Int) {
@@ -109,7 +118,7 @@ class auctioner_homeFragment : Fragment() {
                             val item = dc.document.toObject(Items::class.java)
                             itemList.forEachIndexed { index, items ->
                                 if (items.itemId.equals(item.itemId)) {
-                                    //itemList.add(index, item)
+                                    //categorisedList.add(index, item)
                                     itemList[index] = item
                                     adapter.notifyItemChanged(index)
                                 }
@@ -130,5 +139,24 @@ class auctioner_homeFragment : Fragment() {
                     }
                 }
             })
+    }
+    fun getUsersFromFirebasefireStore(uid: String, nameString: String): Users {
+        var user= Users()
+        val dbRef = FirebaseFirestore.getInstance()
+        dbRef.collection("Users").document("UserData")
+            .collection(nameString).document(uid)
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot != null && documentSnapshot.exists()) {
+                    user = documentSnapshot.toObject(Users::class.java)!!
+                    userList.add(user)
+                    madapter!!.notifyDataSetChanged()
+                    //Log.d("Users",user.toString())
+                }
+            }
+        //if(user != null)
+      //  return user
+     //   else
+            return user
     }
 }
