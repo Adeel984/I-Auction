@@ -46,9 +46,9 @@ class ItemsRVAdapter(var ctx:Context,var itemsList:ArrayList<Items>, var viewCli
         Picasso.get().load(item.itemImageUri).into(holder.itemImage)
         when (user?.accType) {
             enums.AUCTIONER.value->  {
-                when(item.soldOut) {
+                when(item.withDraw) {
                     true -> {
-                        holder.itemStatus.setText("Sold Out")
+                        holder.itemStatus.setText("Un-Available")
                         holder.re_bid.visibility = View.VISIBLE
                         holder.closeBid.visibility= View.GONE
                     }
@@ -60,7 +60,6 @@ class ItemsRVAdapter(var ctx:Context,var itemsList:ArrayList<Items>, var viewCli
                 }
             }
             enums.BIDDER.value-> {
-                holder.itemStatus.setText("Available")
                 when(itemsList[position].bidded_users?.keys?.contains(userId)) {
                     true -> {
                         holder.applyForBid.visibility = View.GONE
