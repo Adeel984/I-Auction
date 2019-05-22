@@ -15,6 +15,7 @@ import android.view.Menu
 import com.example.i_auction.Fragments.auctioner_homeFragment
 import com.example.i_auction.Fragments.bidder_HomeFragment
 import com.example.i_auction.Fragments.post_itemFragment
+import com.example.i_auction.Fragments.upcomingAuctionsFragment
 import com.example.i_auction.Models.Users
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.auth.User
@@ -110,7 +111,11 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                     .replace(R.id.dashboard_container, auctioner_homeFragment())
                     .commit()
             }
-
+            R.id.upcoming_items -> {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.dashboard_container,upcomingAuctionsFragment())
+                    .commit()
+            }
 
             R.id.bidder_items -> {
                 //   nav_view.menu.setGroupVisible(R.id.items_nav,true)
