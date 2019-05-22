@@ -1,10 +1,8 @@
 package com.example.i_auction.Fragments
 
 
-import android.app.Activity
-import android.app.DatePickerDialog
-import android.app.Dialog
-import android.app.TimePickerDialog
+import android.app.*
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -41,8 +39,8 @@ private const val ARG_PARAM2 = "param2"
  */
 class post_itemFragment : Fragment() {
     private var selectedDate: String? = null
-    private var selectedTime: String?= null
-    private var timeLast:String? = null
+    private var selectedTime: String? = null
+    private var timeLast: String? = null
     var itemNameVal: String = ""
     var itemCatVal: String = ""
     var itemBrandVal: String = ""
@@ -61,7 +59,7 @@ class post_itemFragment : Fragment() {
     lateinit var end_bid_time: TextView
     lateinit var submitBtn: Button
     lateinit var dialog: Dialog
-    lateinit var timePicker:ImageButton
+    lateinit var timePicker: ImageButton
 
 
     override fun onCreateView(
@@ -130,6 +128,7 @@ class post_itemFragment : Fragment() {
         }, now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH))
         datePicker.show()
     }
+
     private fun showTimePicker() {
         var timePickerDialog: TimePickerDialog? = null
         val timeFormat = SimpleDateFormat("hh:mm a", Locale.US)
@@ -142,9 +141,10 @@ class post_itemFragment : Fragment() {
             timeLast = "$selectedDate $selectedTime"
             time_last?.text = timeLast
             //Toast.makeText(this@ToDoTasksActivity,"Date is: $selectedDate & Time is: $selectedTime",Toast.LENGTH_SHORT).show()
-        }, now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE),false )
+        }, now.get(Calendar.HOUR_OF_DAY), now.get(Calendar.MINUTE), false)
         timePickerDialog.show()
-        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         when (requestCode) {
             GALLERY_IMAGE_REQ_CODE -> {
@@ -234,17 +234,17 @@ class post_itemFragment : Fragment() {
             Toast.makeText(activity, "Please Select Item Category", Toast.LENGTH_SHORT).show()
             return
         }
-        if(timeLast==null) {
+        if (timeLast == null) {
             time_last.setError("")
             time_last.text = "Please select End time"
             return
         }
-        if(SELECTED_PHOTO_URI == null){
-            Toast.makeText(activity,"Please select image",Toast.LENGTH_LONG).show()
+        if (SELECTED_PHOTO_URI == null) {
+            Toast.makeText(activity, "Please select image", Toast.LENGTH_LONG).show()
             return
         }
         dialog.show()
-        postItemToDb()
+        showDialog()
 
 //        if (spinnerIndexes[0].equals(0)) {
 //            Toast.makeText(activity, "Please select Item Name", Toast.LENGTH_SHORT).show()
@@ -263,6 +263,25 @@ class post_itemFragment : Fragment() {
         //itemCategory:Spinner
         //    lateinit var itemBrand:Spinner
         //    lateinit var itemName:
+    }
+
+    private fun showDialog() {
+        val dialog = AlertDialog.Builder(activity!!)
+        dialog.setTitle("Start selling")
+        dialog.setMessage("Do you want to start start selling your item right now?")
+        dialog.setPositiveButton("Later", object : DialogInterface.OnClickListener {
+            override fun onClick(dialog: DialogInterface?, which: Int) {
+                postItemToDb(true)
+            }
+
+        })
+        dialog.setNegativeButton("Now", object : DialogInterface.OnClickListener {
+            override fun onClick(dialog: DialogInterface?, which: Int) {
+            postItemToDb(false)
+            }
+        })
+        dialog.setCancelable(false)
+        dialog.show()
     }
 
     private fun uploadImageToStorage(dbRef: DocumentReference) {
@@ -296,7 +315,7 @@ class post_itemFragment : Fragment() {
             .commit()
     }
 
-    private fun postItemToDb() {
+    private fun postItemToDb(upcoming: Boolean) {
         val dbRef = FirebaseFirestore.getInstance().collection("Items").document()
         val item = Items(
             dbRef.id,
@@ -311,6 +330,8 @@ class post_itemFragment : Fragment() {
             timeLast!!,
             false,
             null,
+            false,
+            upcoming,
             HashMap()
         )
         dbRef.set(item)
