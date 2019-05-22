@@ -27,10 +27,14 @@ import com.google.firebase.firestore.QuerySnapshot
 
 class auctioner_homeFragment : Fragment() {
 
+    private val categorisedList = ArrayList<Items>()
+    private var categorisedItems: Boolean = false
     private var madapter: BiddersAdapter? = null
-   private lateinit var adapter: ItemsRVAdapter
+    lateinit var auctionerClicked: (views: View, position: Int) -> Unit
+    lateinit var recyler: RecyclerView
+    private lateinit var adapter: ItemsRVAdapter
     var itemList: ArrayList<Items> = ArrayList()
-   private val userId = FirebaseAuth.getInstance().currentUser?.uid
+    private val userId = FirebaseAuth.getInstance().currentUser?.uid
     val userList = ArrayList<Users?>()
 
     override fun onCreateView(
@@ -38,12 +42,46 @@ class auctioner_homeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_auctioner_home, container, false)
-        val recyler: RecyclerView = view.findViewById(R.id.auctioner_main_rv)
-        val auctionerClicked: (views: View, position: Int) -> Unit = { views, position ->
+        recyler = view.findViewById(R.id.auctioner_main_rv)
+        val spinner: Spinner = view.findViewById(R.id.auctioner_item_spinner)
+        ArrayAdapter.createFromResource(activity, R.array.item_name_array, android.R.layout.simple_spinner_item)
+            .also {
+                it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                spinner.adapter = it
+            }
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                val item = parent?.getItemAtPosition(position).toString()
+                if (position > 0) {
+                    categorisedItems = true
+                    showCategorisedItems(item, categorisedItems)
+                } else {
+                    categorisedItems = false
+                    showCategorisedItems(item, categorisedItems)
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+
+            }
+
+        }
+        auctionerClicked = { views, position ->
             when (views.id) {
-                R.id.re_bid_btn -> openOrCloseBidItem(false, position)
-                R.id.close_bid_btn -> openOrCloseBidItem(true, position)
-                R.id.item_cardView -> showBids(position)
+                R.id.re_bid_btn -> {
+                    if (categorisedItems) openOrCloseBidItem(false, position, categorisedList)
+                    else openOrCloseBidItem(false, position, itemList)
+                }
+                R.id.close_bid_btn -> {
+                    if(categorisedItems) openOrCloseBidItem(true, position, categorisedList)
+                    else openOrCloseBidItem(false, position, itemList)
+                }
+
+
+                R.id.item_cardView -> {
+                    if(categorisedItems) showBids(position, categorisedList)
+                    else showBids(position, itemList)
+                }
             }
         }
 
@@ -54,23 +92,45 @@ class auctioner_homeFragment : Fragment() {
         return view
     }
 
-    private fun showBids(position: Int) {
+    private fun showCategorisedItems(name: String, categorisedItems: Boolean) {
+        when (categorisedItems) {
+            true -> {
+                adapter = ItemsRVAdapter(activity!!, categorisedList, auctionerClicked)
+                recyler.adapter = adapter
+                categorisedList.clear()
+                itemList.forEach { item ->
+                    if (item.itemName.equals(name)) {
+                        Log.d("Item Name", item.toString())
+                        categorisedList.add(item)
+                        adapter.notifyDataSetChanged()
+                    }
+                }
+            }
+            false -> {
+                adapter = ItemsRVAdapter(activity!!, itemList, auctionerClicked)
+                recyler.adapter = adapter
+                adapter.notifyDataSetChanged()
+            }
+        }
+    }
+
+    private fun showBids(position: Int, list:ArrayList<Items>) {
         appliedUsersList.clear()
         userList.clear()
-       appliedUsersList.putAll(itemList[position].bidded_users!!)
+        appliedUsersList.putAll(list[position].bidded_users!!)
 //        Log.d("position",position.toString())
 //        Log.d("itemCount", appliedUsersList.size.toString())
 
         var counter = 0
         appliedUsersList.keys.forEach { uid ->
-         getUsersFromFirebasefireStore(uid, NameEnums.Bidder.names)
-           // userList.add(user)
+            getUsersFromFirebasefireStore(uid, NameEnums.Bidder.names)
+            // userList.add(user)
 
-           // if(user.uid.isEmpty()) Toast.makeText(activity!!,"No user",Toast.LENGTH_SHORT).show()
-         //   else {
-             //   userList.add(user)
-          //   //   madapter!!.notifyDataSetChanged()
-          //      Toast.makeText(activity!!,user.toString(),Toast.LENGTH_SHORT).show()
+            // if(user.uid.isEmpty()) Toast.makeText(activity!!,"No user",Toast.LENGTH_SHORT).show()
+            //   else {
+            //   userList.add(user)
+            //   //   madapter!!.notifyDataSetChanged()
+            //      Toast.makeText(activity!!,user.toString(),Toast.LENGTH_SHORT).show()
 
             //(}
             counter++
@@ -82,7 +142,7 @@ class auctioner_homeFragment : Fragment() {
         val bidCountView = dialog.findViewById<TextView>(R.id.bids_count)
         bidCountView.setText(counter.toString())
         val bidsArray = ArrayList<Int>()
-        mySharedPref.appliedUsersList.values.forEach { bidAmount ->
+        appliedUsersList.values.forEach { bidAmount ->
             bidsArray.add(bidAmount)
         }
         recyclerView.layoutManager = LinearLayoutManager(activity)
@@ -91,9 +151,9 @@ class auctioner_homeFragment : Fragment() {
         dialog.show()
     }
 
-    private fun openOrCloseBidItem(itemSold: Boolean, position: Int) {
+    private fun openOrCloseBidItem(itemSold: Boolean, position: Int, list: ArrayList<Items>) {
         val dbRef = FirebaseFirestore.getInstance()
-        dbRef.collection("Items").document(itemList[position].itemId)
+        dbRef.collection("Items").document(list[position].itemId)
             .update("soldOut", itemSold)
     }
 
@@ -123,6 +183,15 @@ class auctioner_homeFragment : Fragment() {
                                     adapter.notifyItemChanged(index)
                                 }
                             }
+                            if (categorisedItems) {
+                                categorisedList.forEachIndexed { indexs, catItem ->
+                                    if (catItem.itemId.equals(item.itemId)) {
+                                        categorisedList[indexs] = item
+                                        adapter.notifyDataSetChanged()
+                                    }
+                                }
+                            }
+
                         }
                         DocumentChange.Type.REMOVED -> {
                             for (doc in snapshots.documents) {
@@ -134,14 +203,21 @@ class auctioner_homeFragment : Fragment() {
                                         adapter.notifyItemRemoved(index)
                                     }
                                 }
+                                if (categorisedItems) {
+                                    categorisedList.forEachIndexed { index, items ->
+                                        categorisedList.removeAt(index)
+                                        adapter.notifyItemRemoved(index)
+                                    }
+                                }
                             }
                         }
                     }
                 }
             })
     }
+
     fun getUsersFromFirebasefireStore(uid: String, nameString: String): Users {
-        var user= Users()
+        var user = Users()
         val dbRef = FirebaseFirestore.getInstance()
         dbRef.collection("Users").document("UserData")
             .collection(nameString).document(uid)
@@ -155,8 +231,8 @@ class auctioner_homeFragment : Fragment() {
                 }
             }
         //if(user != null)
-      //  return user
-     //   else
-            return user
+        //  return user
+        //   else
+        return user
     }
 }
