@@ -42,6 +42,7 @@
     <string name="about_company">About Company</string>
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
+    <string name="upcoming_items">Upcoming Items</string>
 
     // Items Name array
     <string-array name="item_name_array">
