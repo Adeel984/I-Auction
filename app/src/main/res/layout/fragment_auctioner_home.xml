@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context=".Fragments.auctioner_homeFragment">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:context=".Fragments.auctioner_homeFragment">
+    <Spinner
+            android:id="@+id/auctioner_item_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
 
-    <androidx.recyclerview.widget.RecyclerView android:layout_width="match_parent"
-                                               android:id="@+id/auctioner_main_rv"
-                                               android:layout_height="match_parent"/>
+    <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_below="@id/auctioner_item_spinner"
+            android:id="@+id/auctioner_main_rv"
+            android:layout_height="match_parent"/>
 
-</FrameLayout>
+</RelativeLayout>
