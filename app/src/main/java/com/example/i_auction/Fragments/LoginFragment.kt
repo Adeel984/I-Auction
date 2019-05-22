@@ -30,6 +30,7 @@ private const val ARG_PARAM2 = "param2"
  *
  */
 class LoginFragment : Fragment() {
+    private var userid: String? = null
     // lateinit var clickBtn:Button
     lateinit var gotoRegister: TextView
     lateinit var loginBtn: Button
@@ -73,6 +74,7 @@ class LoginFragment : Fragment() {
             .replace(R.id.container_main, RegisterFragment())
             .commit()
     }
+
     // checking if fields are empty
     private fun checkFields() {
         if (email.text.isNullOrEmpty()) {
@@ -95,20 +97,22 @@ class LoginFragment : Fragment() {
             return
         }
     }
-// checking user in firebaseFireStore
+
+    // checking user in firebaseFireStore
     private fun checkUserCredentials(email: String, password: String) {
-        FirebaseAuth.getInstance().signInWithEmailAndPassword(email,password)
+        FirebaseAuth.getInstance().signInWithEmailAndPassword(email, password)
             .addOnSuccessListener {
                 mySharedPref.userId = it.user.uid
-                when(loginRadio.checkedRadioButtonId) {
+                userid = it.user.uid
+                when (loginRadio.checkedRadioButtonId) {
                     radio_bidder_login.id -> checkUserInBidderData()
                     radio_auctioner_login.id -> checkUserInAuctionerData()
-                   // null -> Toast.makeText(activity,"Please select account type",Toast.LENGTH_SHORT).show()
+                    // null -> Toast.makeText(activity,"Please select account type",Toast.LENGTH_SHORT).show()
                 }
             }
             .addOnFailureListener {
                 dialogBox.dismiss()
-                Toast.makeText(activity,it.message,Toast.LENGTH_LONG).show()
+                Toast.makeText(activity, it.message, Toast.LENGTH_LONG).show()
                 return@addOnFailureListener
             }
     }
@@ -121,14 +125,15 @@ class LoginFragment : Fragment() {
             .document(mySharedPref.userId!!)
             .get()
             .addOnSuccessListener {
-                if(it !=null && it.exists()) sendUsertoDashboard(it)
+                if (it != null && it.exists()) sendUsertoDashboard(it)
                 else postErrorUserNotFound()
             }
             .addOnFailureListener {
                 dialogBox.dismiss()
-                Toast.makeText(activity,it.message,Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
             }
     }
+
     private fun checkUserInAuctionerData() {
         val dbRef = FirebaseFirestore.getInstance()
         dbRef.collection("Users")
@@ -137,42 +142,58 @@ class LoginFragment : Fragment() {
             .document(mySharedPref.userId!!)
             .get()
             .addOnSuccessListener {
-                if(it !=null && it.exists()) checkUsersData(it)
+                if (it != null && it.exists()) {
+                    val user = it.toObject(Users::class.java)
+                    mySharedPref().setUserinsharedPref(activity!!,user!!.uid, user)
+                    checkAuctionerDetail()
+                }
                 else postErrorUserNotFound()
             }
             .addOnFailureListener {
                 dialogBox.dismiss()
-                Toast.makeText(activity,it.message,Toast.LENGTH_SHORT).show()
+                Toast.makeText(activity, it.message, Toast.LENGTH_LONG).show()
             }
     }
 
-    private fun checkUsersData(it: DocumentSnapshot) {
-        val user :Users = it.toObject(Users::class.java)!!
-        mySharedPref().setUserinsharedPref(activity!!,user.uid,user)
-        if(mySharedPref().getAuctionerDatainSPref(activity!!,mySharedPref.userId!!) !=null) sendUsertoDashboard(it)
-        else showAuctionerDetailFragment()
-        dialogBox.dismiss()
+    private fun checkAuctionerDetail() {
+        val dbRef = FirebaseFirestore.getInstance()
+        dbRef.collection("Users").document("AuctionerDetails")
+            .collection("Auctioners").document(userid!!)
+            .get()
+            .addOnSuccessListener {
+                if (it.exists()) {
+                    dialogBox.dismiss()
+                    sendUsertoDashboard(it)
+                } else {
+                    dialogBox.dismiss()
+                    showAuctionerDetailFragment()
+                }
+            }
+            .addOnFailureListener {
+                dialogBox.dismiss()
+                Toast.makeText(activity, it.message, Toast.LENGTH_LONG).show()
+            }
     }
 
     fun showAuctionerDetailFragment() {
-        activity!!.
-            supportFragmentManager
+        activity!!.supportFragmentManager
             .beginTransaction()
-            .replace(R.id.container_main,auctionerDetailsFragment())
+            .replace(R.id.container_main, auctionerDetailsFragment())
             .commit()
     }
 
     fun sendUsertoDashboard(it: DocumentSnapshot) {
-        val user :Users = it.toObject(Users::class.java)!!
-        mySharedPref().setUserinsharedPref(activity!!,user.uid,user)
+        val user: Users = it.toObject(Users::class.java)!!
+        mySharedPref().setUserinsharedPref(activity!!, user.uid, user)
         dialogBox.dismiss()
-        Toast.makeText(activity,"Login Success",Toast.LENGTH_SHORT).show()
-        startActivity(Intent(activity,DashboardActivity::class.java))
+        Toast.makeText(activity, "Login Success", Toast.LENGTH_SHORT).show()
+        startActivity(Intent(activity, DashboardActivity::class.java))
         activity?.finish()
     }
+
     fun postErrorUserNotFound() {
         dialogBox.dismiss()
-        Toast.makeText(activity,"Account doesn't exist!",Toast.LENGTH_SHORT).show()
+        Toast.makeText(activity, "Account doesn't exist!", Toast.LENGTH_SHORT).show()
         FirebaseAuth.getInstance().signOut()
     }
 }
