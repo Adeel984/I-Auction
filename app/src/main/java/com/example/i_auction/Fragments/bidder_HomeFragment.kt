@@ -82,10 +82,8 @@ class bidder_HomeFragment : Fragment() {
             when (views.id) {
                 R.id.bid_now_view -> showBidDialogue(position)
                 R.id.withdraw_bid_view -> {
-                    when (categorisedItems) {
-                        true -> applyOrWithDrawFromBid(true, position, "0", categorisedList)
-                        false -> applyOrWithDrawFromBid(true, position, "0", itemsList)
-                    }
+                    if (categorisedItems) applyOrWithDrawFromBid(true, position, "0", categorisedList)
+                    else applyOrWithDrawFromBid(true, position, "0", itemsList)
                 }
             }
         }
@@ -240,6 +238,8 @@ class bidder_HomeFragment : Fragment() {
         val dbRef = FirebaseFirestore.getInstance()
         dbRef.collection("Items")
             .whereEqualTo("soldOut", false)
+            .whereEqualTo("upcoming", false)
+            .whereEqualTo("withDraw", false)
             .addSnapshotListener(EventListener<QuerySnapshot> { snapshots, e ->
                 if (e != null) {
                     Log.d("Nodata", "No data")
