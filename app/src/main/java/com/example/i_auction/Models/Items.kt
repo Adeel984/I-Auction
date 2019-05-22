@@ -14,6 +14,8 @@ data class Items(
     var time_period: String = "",
     var soldOut:Boolean = false,
     var purchaserId:String? = "",
+    var withDraw:Boolean = false,
+    var upcoming:Boolean = false,
     var bidded_users:HashMap<String,Int>? = HashMap()
 ) {
     override fun equals(other: Any?): Boolean {
