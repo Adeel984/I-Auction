@@ -7,8 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.i_auction.Adapters.BiddersAdapter
@@ -44,7 +43,7 @@ class auctioner_homeFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_auctioner_home, container, false)
         recyler = view.findViewById(R.id.auctioner_main_rv)
         val spinner: Spinner = view.findViewById(R.id.auctioner_item_spinner)
-        ArrayAdapter.createFromResource(activity, R.array.item_name_array, android.R.layout.simple_spinner_item)
+        ArrayAdapter.createFromResource(activity!!, R.array.item_name_array, android.R.layout.simple_spinner_item)
             .also {
                 it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 spinner.adapter = it
