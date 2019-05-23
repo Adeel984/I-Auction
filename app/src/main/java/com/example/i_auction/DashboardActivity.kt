@@ -111,6 +111,8 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                     .replace(R.id.dashboard_container, auctioner_homeFragment())
                     .commit()
             }
+            // Bidder drawer Listener
+
             R.id.upcoming_items -> {
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.dashboard_container,upcomingAuctionsFragment())
@@ -118,7 +120,9 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             }
 
             R.id.bidder_items -> {
-                //   nav_view.menu.setGroupVisible(R.id.items_nav,true)
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.dashboard_container,bidder_HomeFragment())
+                    .commit()
             }
             R.id.nav_share -> {
 
