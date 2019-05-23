@@ -145,7 +145,7 @@ class LoginFragment : Fragment() {
                 if (it != null && it.exists()) {
                     val user = it.toObject(Users::class.java)
                     mySharedPref().setUserinsharedPref(activity!!,user!!.uid, user)
-                    checkAuctionerDetail()
+                    checkAuctionerDetail(it)
                 }
                 else postErrorUserNotFound()
             }
@@ -155,7 +155,7 @@ class LoginFragment : Fragment() {
             }
     }
 
-    private fun checkAuctionerDetail() {
+    private fun checkAuctionerDetail(snapShot: DocumentSnapshot) {
         val dbRef = FirebaseFirestore.getInstance()
         dbRef.collection("Users").document("AuctionerDetails")
             .collection("Auctioners").document(userid!!)
@@ -163,7 +163,7 @@ class LoginFragment : Fragment() {
             .addOnSuccessListener {
                 if (it.exists()) {
                     dialogBox.dismiss()
-                    sendUsertoDashboard(it)
+                    sendUsertoDashboard(snapShot)
                 } else {
                     dialogBox.dismiss()
                     showAuctionerDetailFragment()
