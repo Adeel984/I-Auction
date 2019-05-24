@@ -18,11 +18,11 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        if(this.intent != null)
+        if (this.intent != null)
             supportFragmentManager
                 .beginTransaction()
                 .add(R.id.container_main, LoginFragment()).commit()
-         else
+        else
             supportFragmentManager
                 .beginTransaction()
                 .add(R.id.container_main, RegisterFragment())
@@ -33,35 +33,17 @@ class MainActivity : AppCompatActivity() {
         supportActionBar?.setDisplayUseLogoEnabled(true)
         supportActionBar?.title = "I-Auction"
         supportActionBar?.setDisplayShowTitleEnabled(true)
+
+        // checking wether user is logged in or not
+        fun userLoggedIn(): Boolean {
+            return FirebaseAuth.getInstance().currentUser?.uid != null
+        }
         //if user is logged in start dashboard activity
-        when (userLoggedIn()) {
-            true -> {
-                val userId = FirebaseAuth.getInstance().currentUser!!.uid
-                val user: Users? = mySharedPref().getUserfromsharedPref(this, userId)
-                when (user!!.accType) {
-                    enums.AUCTIONER.value -> {
-                        if (mySharedPref().getAuctionerDatainSPref(this, userId) != null) {
-                            startActivity(Intent(this@MainActivity, DashboardActivity::class.java))
-                            finish()
-                        } else supportFragmentManager.beginTransaction().replace(
-                            R.id.container_main,
-                            auctionerDetailsFragment()
-                        ).commit()
-                    }
-                    enums.BIDDER.value -> {
-                        startActivity(Intent(this@MainActivity, DashboardActivity::class.java))
-                        finish()
-                    }
-                }
-            }
+        if (userLoggedIn()) {
+            startActivity(Intent(this@MainActivity, DashboardActivity::class.java))
+            finish()
         }
     }
-
-    // checking wether user is logged in or not
-    fun userLoggedIn(): Boolean {
-        return FirebaseAuth.getInstance().currentUser?.uid != null
-    }
-
 
     override fun dispatchTouchEvent(ev: MotionEvent?): Boolean {
         if (currentFocus != null) {
