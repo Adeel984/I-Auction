@@ -3,6 +3,7 @@ package com.example.i_auction.Fragments
 
 import android.app.Dialog
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -13,8 +14,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.i_auction.Adapters.ItemsRVAdapter
 import com.example.i_auction.Models.Items
+import com.example.i_auction.Models.Users
+import com.example.i_auction.Models.bidders_bid_data
+import com.example.i_auction.NameEnums
 import com.example.i_auction.mySharedPref.Companion.appliedUsersList
 import com.example.i_auction.R
+import com.example.i_auction.mySharedPref.Companion.toUser
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.EventListener
@@ -44,6 +49,9 @@ class bidder_HomeFragment : Fragment() {
     lateinit var dialog: Dialog
     lateinit var bidderClicked: (views: View, position: Int) -> Unit
     lateinit var recyler: RecyclerView
+    var bid_dataObj = bidders_bid_data()
+    var assuranceText:EditText? = null
+    val auctionerList = ArrayList<Users>()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -85,6 +93,19 @@ class bidder_HomeFragment : Fragment() {
                     if (categorisedItems) applyOrWithDrawFromBid(true, position, "0", categorisedList)
                     else applyOrWithDrawFromBid(true, position, "0", itemsList)
                 }
+                R.id.contact_auctioner -> {
+                    toUser = auctionerList[position]
+//                    Handler().postDelayed({
+//                    },300000)
+                        activity!!
+                            .supportFragmentManager
+                            .beginTransaction()
+                            .replace(R.id.dashboard_container, chatFragment())
+                            .commit()
+                   // Toast.makeText(activity,bool.toString(),Toast.LENGTH_SHORT).show()
+
+//                    DashboardActivity().title = "MyName"
+                }
             }
         }
         adapter = ItemsRVAdapter(activity!!, itemsList, bidderClicked)
@@ -94,14 +115,32 @@ class bidder_HomeFragment : Fragment() {
         return view
     }
 
+    private fun getUser(auctionerId: String)  {
+        val dbRef = FirebaseFirestore.getInstance()
+        dbRef.collection("Users").document("UserData")
+            .collection(NameEnums.Auctioner.names).document(auctionerId)
+            .get()
+            .addOnSuccessListener {
+                if(it.exists()){
+                    val auctioner = it.toObject(Users::class.java)
+                    auctionerList.add(auctioner!!)
+                }
+            }
+            .addOnFailureListener {
+                Toast.makeText(activity,it.message,Toast.LENGTH_SHORT).show()
+            }
+    }
+
     private fun showCategorisedItems(names: String, categorised: Boolean) {
         when (categorised) {
             true -> {
+                auctionerList.clear()
                 adapter = ItemsRVAdapter(activity!!, categorisedList, bidderClicked)
                 recyler.adapter = adapter
                 categorisedList.clear()
                 itemsList.forEach { item ->
                     if (item.itemCategory.equals(names)) {
+                        getUser(item.itemUploaderId)
                         Log.d("Category", names)
                         categorisedList.add(item)
                         adapter.notifyDataSetChanged()
@@ -109,6 +148,10 @@ class bidder_HomeFragment : Fragment() {
                 }
             }
             else -> {
+                auctionerList.clear()
+                itemsList.forEach {item ->
+                    getUser(item.itemUploaderId)
+                }
                 adapter = ItemsRVAdapter(activity!!, itemsList, bidderClicked)
                 recyler.adapter = adapter
                 adapter.notifyDataSetChanged()
@@ -119,7 +162,6 @@ class bidder_HomeFragment : Fragment() {
     }
 
     private fun showBidDialogue(position: Int) {
-
         dialog.setContentView(R.layout.bidder_show_popup)
         val itemName = dialog.findViewById<TextView>(R.id.item_name_bidder_view)
         val plusBtn = dialog.findViewById<Button>(R.id.plus_controller)
@@ -129,11 +171,13 @@ class bidder_HomeFragment : Fragment() {
         val minBidAmount = dialog.findViewById<TextView>(R.id.min_bid_amount_bidderView)
         val maxBidAmount = dialog.findViewById<TextView>(R.id.max_bid_amount_bidderView)
         val applyBid = dialog.findViewById<Button>(R.id.apply_bid)
-        var item = Items()
+        assuranceText = dialog.findViewById(R.id.assurance_bidder)
+        val item: Items
         when (categorisedItems) {
             true -> item = categorisedList[position]
             else -> item = itemsList[position]
         }
+        appliedUsersList.putAll(item.bidded_users!!)
         value = item.min_bid_amount.toInt()
         try {
             bidValue.setText(value.toString())
@@ -142,8 +186,8 @@ class bidder_HomeFragment : Fragment() {
             maxBidAmount.setText(item.max_bid_amount)
             itemName.text = item.itemName
             item.bidded_users?.values?.forEach {
-                if (it >= maxVal) {
-                    maxVal = it
+                if (it.bidAmount >= maxVal) {
+                    maxVal = it.bidAmount
                 }
             }
             maxBidAmount.setText(maxVal.toString())
@@ -151,6 +195,7 @@ class bidder_HomeFragment : Fragment() {
             e.message
         }
         plusBtn.setOnClickListener {
+            value = bidValue.text.toString().toInt()
             value += 1
             bidValue.setText(value.toString())
         }
@@ -163,17 +208,26 @@ class bidder_HomeFragment : Fragment() {
             }
         }
         applyBid.setOnClickListener {
-            wait_dialog.setContentView(R.layout.dialog_r)
-            wait_dialog.setCancelable(false)
-            val title = wait_dialog.findViewById<TextView>(R.id.dialog_title)
-            val message = wait_dialog.findViewById<TextView>(R.id.dialog_message)
-            title.setText("Applying Bid")
-            message.setText("Please Wait")
-            wait_dialog.show()
-            when (categorisedItems) {
-                true -> applyOrWithDrawFromBid(false, position, bidValue.text.toString(), categorisedList)
-                else -> applyOrWithDrawFromBid(false, position, bidValue.text.toString(), itemsList)
+            value = bidValue.text.toString().toInt()
+            Toast.makeText(activity,item.min_bid_amount,Toast.LENGTH_SHORT).show()
+            if(assuranceText!!.text.isNullOrEmpty()) {
+                Toast.makeText(activity,"Please provide assurance",Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
             }
+            if(value >= item.min_bid_amount.toInt()) {
+                Toast.makeText(activity,value.toString(),Toast.LENGTH_SHORT).show()
+                wait_dialog.setContentView(R.layout.dialog_r)
+                wait_dialog.setCancelable(false)
+                val title = wait_dialog.findViewById<TextView>(R.id.dialog_title)
+                val message = wait_dialog.findViewById<TextView>(R.id.dialog_message)
+                title.setText("Applying Bid")
+                message.setText("Please Wait")
+                wait_dialog.show()
+                when (categorisedItems) {
+                    true -> applyOrWithDrawFromBid(false, position, bidValue.text.toString(), categorisedList)
+                    else -> applyOrWithDrawFromBid(false, position, bidValue.text.toString(), itemsList)
+                }
+            } else Toast.makeText(activity!!, "Bid value can not be less than Min Bid value", Toast.LENGTH_LONG).show()
         }
         dialog.show()
     }
@@ -211,7 +265,8 @@ class bidder_HomeFragment : Fragment() {
 //                    dbRef.collection("Items").document(categorisedList[position].itemId).
 //                        update("appliedUsers",appliedUsersList)
 //                } else {
-                appliedUsersList.put(userId!!, value)
+                bid_dataObj = bidders_bid_data(userId!!,assuranceText?.text.toString(),bidValue.toInt(),list[position].itemId,false)
+                appliedUsersList.put(userId, bid_dataObj)
                 if (bidValue.toInt() > maxVal) {
                     dbRef.collection("Items").document(list[position].itemId)
                         .update("max_bid_amount", bidValue)
@@ -224,6 +279,7 @@ class bidder_HomeFragment : Fragment() {
                         dialog.dismiss()
                         Toast.makeText(activity!!, "Success!", Toast.LENGTH_SHORT).show()
                         adapter.notifyItemChanged(position)
+                        appliedUsersList.clear()
                     }
                     .addOnFailureListener {
                         wait_dialog.dismiss()
@@ -257,7 +313,7 @@ class bidder_HomeFragment : Fragment() {
                             val item = dc.document.toObject(Items::class.java)
                             itemsList.forEachIndexed { index, items ->
                                 if (items.itemId.equals(item.itemId)) {
-                                    //categorisedList.add(index, item)
+                                    //categorisedList.add(index, itemData)
                                     itemsList[index] = item
                                     adapter.notifyItemChanged(index)
                                 }
