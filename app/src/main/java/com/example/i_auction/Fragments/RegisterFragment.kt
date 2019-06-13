@@ -25,6 +25,8 @@ import com.example.i_auction.enums
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.UploadTask
 import de.hdodenhof.circleimageview.CircleImageView
 import kotlinx.android.synthetic.main.fragment_register.*
 import java.io.ByteArrayInputStream
@@ -130,10 +132,15 @@ class RegisterFragment : Fragment() {
     private fun registerToAuth(email: String, password: String) {
         FirebaseAuth.getInstance().createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener {
+                val fileName = FirebaseAuth.getInstance().uid
+                val storageRef = FirebaseStorage.getInstance().getReference("/images/$fileName")
                 if (SELECTED_PHOTO_URI != null) {
-                    val fileName = FirebaseAuth.getInstance().uid
-                    val storageRef = FirebaseStorage.getInstance().getReference("/images/$fileName")
-                    storageRef.putFile(SELECTED_PHOTO_URI!!)
+                    val bmp = MediaStore.Images.Media.getBitmap(activity!!.getContentResolver(), SELECTED_PHOTO_URI);
+                    val baos = ByteArrayOutputStream();
+                    bmp.compress(Bitmap.CompressFormat.JPEG, 25, baos);
+                    val data = baos.toByteArray();
+                    //uploading the image
+                    storageRef.putBytes(data)
                         .addOnSuccessListener {
                             storageRef.downloadUrl.addOnSuccessListener {
                                 saveUserTodb(it.toString())
@@ -214,8 +221,10 @@ class RegisterFragment : Fragment() {
                     val bitFill = File(imageuri?.toString())
                     val bytes = ByteArrayOutputStream();
                     val bitmap = MediaStore.Images.Media.getBitmap(activity!!.contentResolver, imageuri)
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 20, bytes);
-                    val path = MediaStore.Images.Media.insertImage(activity!!.getContentResolver(),bitmap, imageuri?.toString(),null)
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 10, bytes);
+                   // val path = MediaStore.Images.Media.insertImage(activity!!.getContentResolver(),bitmap, imageuri?.toString(),null)
+
+
                     //CompressImage
 //                    val bmp = BitmapFactory.decodeFile(data.dataString)
 //                    val bos = ByteArrayOutputStream();

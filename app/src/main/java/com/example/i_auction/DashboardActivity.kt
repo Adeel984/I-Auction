@@ -2,6 +2,7 @@ package com.example.i_auction
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import androidx.core.view.GravityCompat
@@ -12,12 +13,11 @@ import com.google.android.material.navigation.NavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import android.view.Menu
-import com.example.i_auction.Fragments.auctioner_homeFragment
-import com.example.i_auction.Fragments.bidder_HomeFragment
-import com.example.i_auction.Fragments.post_itemFragment
-import com.example.i_auction.Fragments.upcomingAuctionsFragment
+import android.widget.Toast
+import com.example.i_auction.Fragments.*
 import com.example.i_auction.Models.Users
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.auth.User
 import kotlinx.android.synthetic.main.activity_dashboard.*
 
@@ -58,9 +58,24 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 navView.menu.setGroupVisible(R.id.bidder_menu, true)
             }
             enums.AUCTIONER.value -> {
-                supportFragmentManager.beginTransaction()
-                    .add(R.id.dashboard_container, auctioner_homeFragment())
-                    .commit()
+                val dbRef = FirebaseFirestore.getInstance()
+                dbRef.collection("Users").document("AuctionerDetails")
+                    .collection("Auctioners")
+                    .document(currentUser.uid)
+                    .get()
+                    .addOnSuccessListener {
+                        if(it !=null && it.exists()) {
+                            supportFragmentManager.beginTransaction()
+                                .add(R.id.dashboard_container, auctioner_homeFragment())
+                                .commit()
+                        } else supportFragmentManager.beginTransaction().replace(
+                            R.id.dashboard_container,
+                            auctionerDetailsFragment()
+                        ).commit()
+                    }
+                    .addOnFailureListener {
+                        Toast.makeText(this@DashboardActivity,it.message, Toast.LENGTH_LONG).show()
+                    }
                 navView.menu.setGroupVisible(R.id.auctioner_menu, true)
             }
         }
@@ -81,7 +96,7 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
+        // Handle action bar itemData clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         return when (item.itemId) {
@@ -96,8 +111,8 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        // Handle navigation view item clicks here.
-        // Handle navigation view item clicks here.
+        // Handle navigation view itemData clicks here.
+        // Handle navigation view itemData clicks here.
         when (item.itemId) {
             //Auctioner drawer listeners
             R.id.post_item -> {
@@ -134,4 +149,5 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
+
 }

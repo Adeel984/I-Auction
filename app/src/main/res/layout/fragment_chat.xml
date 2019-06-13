@@ -1,14 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              tools:context=".Fragments.chatFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <!--<TextView-->
+            <!--android:id="@+id/name"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="@string/hello_blank_fragment"/>-->
+    <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/chat_RV"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/hello_blank_fragment"/>
+            android:layout_above="@+id/linear_view"
+            android:layout_height="match_parent"/>
+    <RelativeLayout
+            android:layout_alignParentBottom="true"
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:id="@+id/linear_view"
+            android:layout_height="50dp">
+        <EditText
+                android:layout_alignParentBottom="true"
+                android:layout_width="365dp"
+                android:layout_height="45dp"
+                android:background="@color/transparent"
+                android:hint="@string/type_message"
+                android:paddingLeft="10dp"
+                android:id="@+id/textMsg"/>
+        <ImageButton
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginTop="3dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:background="@drawable/ic_send_black_24dp"
+                android:id="@+id/send_btn_chatLog" android:layout_alignParentRight="true"/>
 
-</FrameLayout>
+    </RelativeLayout>
+
+
+</RelativeLayout>

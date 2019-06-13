@@ -43,15 +43,19 @@
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
     <string name="upcoming_items">Upcoming Items</string>
+    <string name="accept_bid">Accept Bid</string>
+    <string name="accepted">Accepted</string>
+    <string name="type_message">Type Message</string>
+    <string name="contact">Contact</string>
 
     // Items Name array
     <string-array name="item_name_array">
         <item>---</item>
-        <item>Mobiles</item>
-        <item>Laptops</item>
-        <item>LED</item>
-        <item>Air Conditioners</item>
-        <item>Refrigerators</item>
+        <item>Mobile</item>
+        <item>Laptop</item>
+        <item>LED / LCD</item>
+        <item>Air Conditioner</item>
+        <item>Refrigerator</item>
     </string-array>
     //Category items Array
     <string-array name="category_items_array">

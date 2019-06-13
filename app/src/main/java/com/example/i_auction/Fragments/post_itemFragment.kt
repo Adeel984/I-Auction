@@ -24,6 +24,7 @@ import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.fragment_post_item.*
+import java.io.ByteArrayOutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.HashMap
@@ -268,7 +269,7 @@ class post_itemFragment : Fragment() {
     private fun showDialog() {
         val dialog = AlertDialog.Builder(activity!!)
         dialog.setTitle("Start selling")
-        dialog.setMessage("Do you want to start start selling your item right now?")
+        dialog.setMessage("Do you want to start start selling your itemData right now?")
         dialog.setPositiveButton("Later", object : DialogInterface.OnClickListener {
             override fun onClick(dialog: DialogInterface?, which: Int) {
                 postItemToDb(true)
@@ -286,7 +287,12 @@ class post_itemFragment : Fragment() {
 
     private fun uploadImageToStorage(dbRef: DocumentReference) {
         val fireStorageRef = FirebaseStorage.getInstance().getReference("itemImages/" + dbRef.id)
-        fireStorageRef.putFile(SELECTED_PHOTO_URI!!)
+        val bmp = MediaStore.Images.Media.getBitmap(activity!!.getContentResolver(), SELECTED_PHOTO_URI);
+        val baos = ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 25, baos);
+        val data = baos.toByteArray();
+        //uploading the image
+        fireStorageRef.putBytes(data)
             .addOnSuccessListener {
                 fireStorageRef.downloadUrl.addOnSuccessListener {
                     dbRef.update("itemImageUri", it.toString())

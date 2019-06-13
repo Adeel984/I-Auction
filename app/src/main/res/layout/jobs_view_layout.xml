@@ -79,12 +79,12 @@
                     android:textStyle="bold"
                     android:textColor="@color/transparent"
                     android:layout_width="wrap_content"
-                    android:visibility="gone"
+
                     android:background="@drawable/button_apply_for_bid"
                     android:layout_height="43dp"
                     android:id="@+id/bid_now_view" android:layout_marginEnd="8dp" android:layout_marginRight="8dp"
                     app:layout_constraintEnd_toEndOf="parent" app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_marginBottom="8dp"/>
+                    android:layout_marginBottom="8dp" android:visibility="gone"/>
             <Button
                     android:text="Withdraw from Bid"
                     android:textStyle="bold"
@@ -103,6 +103,14 @@
                     android:id="@+id/item_status_view" android:layout_marginEnd="8dp" android:layout_marginRight="8dp"
                     app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent"
                     android:layout_marginTop="8dp"/>
+            <Button
+                    android:text="Contact"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/contact_auctioner"
+                    app:layout_constraintTop_toBottomOf="@+id/item_status_view" android:layout_marginTop="36dp"
+                    android:layout_marginLeft="80dp" android:layout_marginStart="80dp"
+                    app:layout_constraintStart_toEndOf="@+id/item_brand_view"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 </RelativeLayout>

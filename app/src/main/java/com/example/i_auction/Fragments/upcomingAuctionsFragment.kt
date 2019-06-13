@@ -16,9 +16,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.i_auction.Adapters.ItemsRVAdapter
 import com.example.i_auction.Models.Items
+import com.example.i_auction.Models.bidders_bid_data
 
 import com.example.i_auction.R
 import com.example.i_auction.mySharedPref
+import com.example.i_auction.mySharedPref.Companion.appliedUsersList
 import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
@@ -120,7 +122,7 @@ class upcomingAuctionsFragment : Fragment() {
                             val item = dc.document.toObject(Items::class.java)
                             itemsList.forEachIndexed { index, items ->
                                 if (items.itemId.equals(item.itemId)) {
-                                    //categorisedList.add(index, item)
+                                    //categorisedList.add(index, itemData)
                                     itemsList[index] = item
                                     adapter.notifyItemChanged(index)
                                 }
@@ -167,8 +169,8 @@ class upcomingAuctionsFragment : Fragment() {
             maxBidAmount.setText(item.max_bid_amount)
             itemName.text = item.itemName
             item.bidded_users?.values?.forEach {
-                if (it >= maxVal) {
-                    maxVal = it
+                if (it.bidAmount >= maxVal) {
+                    maxVal = it.bidAmount
                 }
             }
             maxBidAmount.setText(maxVal.toString())
@@ -214,11 +216,11 @@ class upcomingAuctionsFragment : Fragment() {
         val dbRef = FirebaseFirestore.getInstance()
         when (withDraw) {
             true -> {
-                mySharedPref.appliedUsersList.remove(userId!!)
+                appliedUsersList.remove(userId!!)
                 dbRef.collection("Items").document(list[position].itemId)
-                    .update("bidded_users", mySharedPref.appliedUsersList)
+                    .update("bidded_users", appliedUsersList)
                     .addOnSuccessListener {
-                        mySharedPref.appliedUsersList.clear()
+                        appliedUsersList.clear()
                         wait_dialog.dismiss()
                         Toast.makeText(activity!!, "Success!", Toast.LENGTH_SHORT).show()
                         adapter.notifyItemChanged(position)
@@ -235,7 +237,8 @@ class upcomingAuctionsFragment : Fragment() {
 //                    dbRef.collection("Items").document(categorisedList[position].itemId).
 //                        update("appliedUsers",appliedUsersList)
 //                } else {
-                mySharedPref.appliedUsersList.put(userId!!, value)
+                val bidData = bidders_bid_data()
+                appliedUsersList.put(userId!!, bidData)
                 if (bidValue.toInt() > maxVal) {
                     dbRef.collection("Items").document(list[position].itemId)
                         .update("max_bid_amount", bidValue)
@@ -266,13 +269,13 @@ class upcomingAuctionsFragment : Fragment() {
                 itemsList.forEach { item ->
                     val itembr = item.itemBrand.toLowerCase()
                     val text = names!!.toLowerCase()
-                    // searching in item brand
+                    // searching in itemData brand
                     if (itembr.equals(text) || itembr.contains(text)) {
                         Log.d("dataxx", names)
                         categorisedList.add(item)
                        // adapter.notifyDataSetChanged()
                     }
-                    //searching in item description
+                    //searching in itemData description
                     val itemDesc = item.itemDesc.toLowerCase()
                     if(itemDesc.equals(text) || itemDesc.contains(text)) {
                         categorisedList.add(item)

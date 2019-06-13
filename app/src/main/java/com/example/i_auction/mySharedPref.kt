@@ -6,17 +6,23 @@ import com.example.i_auction.Adapters.ItemsRVAdapter
 import com.example.i_auction.Models.Auctioners
 import com.example.i_auction.Models.Items
 import com.example.i_auction.Models.Users
+import com.example.i_auction.Models.bidders_bid_data
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
+import com.google.firebase.firestore.auth.User
 import com.google.gson.Gson
 
 class mySharedPref {
     companion object {
         var userId: String? = null
-        val appliedUsersList = HashMap<String, Int>()
+        val appliedUsersList = HashMap<String, bidders_bid_data>()
+        var chatName:String? = null
+        var itemData = Items()
+        var fromUser:Users? = null
+        var toUser:Users? = null
     }
 
     val userIdx = FirebaseAuth.getInstance().currentUser!!.uid
