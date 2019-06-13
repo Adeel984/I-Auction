@@ -14,12 +14,14 @@ import com.example.i_auction.Adapters.BiddersAdapter
 import com.example.i_auction.Adapters.ItemsRVAdapter
 import com.example.i_auction.Models.Items
 import com.example.i_auction.Models.Users
+import com.example.i_auction.Models.bidders_bid_data
 import com.example.i_auction.NameEnums
 import com.example.i_auction.R
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.example.i_auction.mySharedPref
 import com.example.i_auction.mySharedPref.Companion.appliedUsersList
+import com.example.i_auction.mySharedPref.Companion.itemData
+import com.example.i_auction.mySharedPref.Companion.toUser
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.firestore.QuerySnapshot
@@ -35,12 +37,17 @@ class auctioner_homeFragment : Fragment() {
     var itemList: ArrayList<Items> = ArrayList()
     private val userId = FirebaseAuth.getInstance().currentUser?.uid
     val userList = ArrayList<Users?>()
+    lateinit var viewClick: (view: View, position: Int) -> Unit
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_auctioner_home, container, false)
+        viewClick = { views, position ->
+            if(views.id.equals(R.id.accept_bid_btn)) acceptBid(position)
+            else contactBidder(position)
+        }
         recyler = view.findViewById(R.id.auctioner_main_rv)
         val spinner: Spinner = view.findViewById(R.id.auctioner_item_spinner)
         ArrayAdapter.createFromResource(activity!!, R.array.item_name_array, android.R.layout.simple_spinner_item)
@@ -91,6 +98,35 @@ class auctioner_homeFragment : Fragment() {
         return view
     }
 
+    private fun contactBidder(position: Int) {
+        toUser = userList[position]
+        Log.d("User is", toUser!!.userName)
+        activity!!
+            .supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.dashboard_container, chatFragment())
+            .commit()
+    }
+
+    private fun acceptBid(position: Int) {
+        appliedUsersList.values.forEach { bidders_bid_data ->
+            if (bidders_bid_data.bidder_id.equals(userList[position]!!.uid)) {
+                bidders_bid_data.accepted_bid = true
+                appliedUsersList[bidders_bid_data.bidder_id] = bidders_bid_data
+            }
+        }
+        val dbRef = FirebaseFirestore.getInstance()
+        dbRef.collection("Items").document(itemData.itemId)
+            .update("bidded_users", appliedUsersList)
+            .addOnSuccessListener {
+                Toast.makeText(activity, "Success", Toast.LENGTH_SHORT).show()
+                madapter!!.notifyDataSetChanged()
+            }
+            .addOnFailureListener {
+                Toast.makeText(activity, it.message, Toast.LENGTH_LONG).show()
+            }
+    }
+
     private fun showCategorisedItems(name: String, categorisedItems: Boolean) {
         when (categorisedItems) {
             true -> {
@@ -98,8 +134,8 @@ class auctioner_homeFragment : Fragment() {
                 recyler.adapter = adapter
                 categorisedList.clear()
                 itemList.forEach { item ->
-                    if (item.itemName.equals(name)) {
-                        Log.d("Item Name", item.toString())
+                    Toast.makeText(activity, item.itemName, Toast.LENGTH_SHORT).show()
+                    if (item.itemName.contains(name)) {
                         categorisedList.add(item)
                         adapter.notifyDataSetChanged()
                     }
@@ -113,8 +149,9 @@ class auctioner_homeFragment : Fragment() {
         }
     }
 
-    private fun showBids(position: Int, list:ArrayList<Items>) {
+    private fun showBids(position: Int, list: ArrayList<Items>) {
         appliedUsersList.clear()
+        itemData = list[position]
         userList.clear()
         appliedUsersList.putAll(list[position].bidded_users!!)
 //        Log.d("position",position.toString())
@@ -140,12 +177,12 @@ class auctioner_homeFragment : Fragment() {
         val recyclerView = dialog.findViewById<RecyclerView>(R.id.bids_RV)
         val bidCountView = dialog.findViewById<TextView>(R.id.bids_count)
         bidCountView.setText(counter.toString())
-        val bidsArray = ArrayList<Int>()
-        appliedUsersList.values.forEach { bidAmount ->
-            bidsArray.add(bidAmount)
+        val bidsArray = ArrayList<bidders_bid_data>()
+        appliedUsersList.values.forEach { bid_data ->
+            bidsArray.add(bid_data)
         }
         recyclerView.layoutManager = LinearLayoutManager(activity)
-        madapter = BiddersAdapter(activity!!, userList, bidsArray)
+        madapter = BiddersAdapter(activity!!, userList, bidsArray, viewClick)
         recyclerView.adapter = madapter
         dialog.show()
     }
@@ -171,13 +208,13 @@ class auctioner_homeFragment : Fragment() {
                             val item = dc.document.toObject(Items::class.java)
                             itemList.add(item)
                             adapter.notifyDataSetChanged()
-                            Log.d("item", item.toString())
+                            Log.d("itemData", item.toString())
                         }
                         DocumentChange.Type.MODIFIED -> {
                             val item = dc.document.toObject(Items::class.java)
                             itemList.forEachIndexed { index, items ->
                                 if (items.itemId.equals(item.itemId)) {
-                                    //categorisedList.add(index, item)
+                                    //categorisedList.add(index, itemData)
                                     itemList[index] = item
                                     adapter.notifyItemChanged(index)
                                 }
@@ -190,7 +227,6 @@ class auctioner_homeFragment : Fragment() {
                                     }
                                 }
                             }
-
                         }
                         DocumentChange.Type.REMOVED -> {
                             for (doc in snapshots.documents) {
