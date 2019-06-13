@@ -46,6 +46,7 @@ class ItemsRVAdapter(var ctx:Context,var itemsList:ArrayList<Items>, var viewCli
         Picasso.get().load(item.itemImageUri).into(holder.itemImage)
         when (user?.accType) {
             enums.AUCTIONER.value->  {
+                holder.contactBtn.visibility = View.GONE
                 when(item.withDraw) {
                     true -> {
                         holder.itemStatus.setText("Un-Available")
@@ -60,6 +61,7 @@ class ItemsRVAdapter(var ctx:Context,var itemsList:ArrayList<Items>, var viewCli
                 }
             }
             enums.BIDDER.value-> {
+                holder.contactBtn.visibility = View.VISIBLE
                 when(itemsList[position].bidded_users?.keys?.contains(userId)) {
                     true -> {
                         holder.applyForBid.visibility = View.GONE
@@ -71,6 +73,9 @@ class ItemsRVAdapter(var ctx:Context,var itemsList:ArrayList<Items>, var viewCli
                         }
                 }
             }
+        }
+        holder.contactBtn.setOnClickListener {
+            viewClick(it,position)
         }
         holder.applyForBid.setOnClickListener {
             viewClick(it,position)
@@ -130,5 +135,6 @@ class ItemsRVAdapter(var ctx:Context,var itemsList:ArrayList<Items>, var viewCli
         //Bidder Buttons
         val applyForBid:Button= view.findViewById(R.id.bid_now_view)
         val withDrawFrobBid:Button = view.findViewById(R.id.withdraw_bid_view)
+        val contactBtn:Button = view.findViewById(R.id.contact_auctioner)
     }
 }
