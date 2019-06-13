@@ -16,7 +16,7 @@ data class Items(
     var purchaserId:String? = "",
     var withDraw:Boolean = false,
     var upcoming:Boolean = false,
-    var bidded_users:HashMap<String,Int>? = HashMap()
+    var bidded_users:HashMap<String,bidders_bid_data>? = HashMap()
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
