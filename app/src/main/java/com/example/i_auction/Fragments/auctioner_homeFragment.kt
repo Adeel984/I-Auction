@@ -105,6 +105,7 @@ class auctioner_homeFragment : Fragment() {
             .supportFragmentManager
             .beginTransaction()
             .replace(R.id.dashboard_container, chatFragment())
+            .addToBackStack("nothing")
             .commit()
     }
 
