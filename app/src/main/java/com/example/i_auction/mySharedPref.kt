@@ -19,7 +19,7 @@ class mySharedPref {
     companion object {
         var userId: String? = null
         val appliedUsersList = HashMap<String, bidders_bid_data>()
-        var chatName:String? = null
+        var toId:String? = null
         var itemData = Items()
         var fromUser:Users? = null
         var toUser:Users? = null
