@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.i_auction.Adapters.BiddersAdapter
@@ -21,6 +22,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.example.i_auction.mySharedPref.Companion.appliedUsersList
 import com.example.i_auction.mySharedPref.Companion.itemData
+import com.example.i_auction.mySharedPref.Companion.toId
 import com.example.i_auction.mySharedPref.Companion.toUser
 import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.EventListener
@@ -28,6 +30,7 @@ import com.google.firebase.firestore.QuerySnapshot
 
 class auctioner_homeFragment : Fragment() {
 
+    lateinit var biddersDialog: Dialog
     private val categorisedList = ArrayList<Items>()
     private var categorisedItems: Boolean = false
     private var madapter: BiddersAdapter? = null
@@ -44,6 +47,7 @@ class auctioner_homeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_auctioner_home, container, false)
+        biddersDialog = Dialog(activity!!)
         viewClick = { views, position ->
             if(views.id.equals(R.id.accept_bid_btn)) acceptBid(position)
             else contactBidder(position)
@@ -74,14 +78,14 @@ class auctioner_homeFragment : Fragment() {
         }
         auctionerClicked = { views, position ->
             when (views.id) {
-                R.id.re_bid_btn -> {
-                    if (categorisedItems) openOrCloseBidItem(false, position, categorisedList)
-                    else openOrCloseBidItem(false, position, itemList)
-                }
-                R.id.close_bid_btn -> {
-                    if(categorisedItems) openOrCloseBidItem(true, position, categorisedList)
-                    else openOrCloseBidItem(false, position, itemList)
-                }
+//                R.id.re_bid_btn -> {
+//                    if (categorisedItems) openOrCloseBidItem(false, position, categorisedList)
+//                    else openOrCloseBidItem(false, position, itemList)
+//                }
+//                R.id.close_bid_btn -> {
+//                    if(categorisedItems) openOrCloseBidItem(true, position, categorisedList)
+//                    else openOrCloseBidItem(true, position, itemList)
+//                }
 
 
                 R.id.item_cardView -> {
@@ -91,15 +95,16 @@ class auctioner_homeFragment : Fragment() {
             }
         }
 
-        recyler.layoutManager = LinearLayoutManager(activity!!)
+        recyler.layoutManager = GridLayoutManager(activity!!,2)
         adapter = ItemsRVAdapter(activity!!, itemList, auctionerClicked)
         recyler.adapter = adapter
-        getAllItems()
+        if(itemList.size==0) getAllItems()
         return view
     }
 
     private fun contactBidder(position: Int) {
-        toUser = userList[position]
+        toId = userList[position]!!.uid
+        biddersDialog.dismiss()
         Log.d("User is", toUser!!.userName)
         activity!!
             .supportFragmentManager
@@ -135,7 +140,6 @@ class auctioner_homeFragment : Fragment() {
                 recyler.adapter = adapter
                 categorisedList.clear()
                 itemList.forEach { item ->
-                    Toast.makeText(activity, item.itemName, Toast.LENGTH_SHORT).show()
                     if (item.itemName.contains(name)) {
                         categorisedList.add(item)
                         adapter.notifyDataSetChanged()
@@ -172,11 +176,15 @@ class auctioner_homeFragment : Fragment() {
             //(}
             counter++
         }
-        val dialog = Dialog(activity!!)
+
 //        dialog.window.setLayout(400,400)
-        dialog.setContentView(R.layout.bidders_view_layout)
-        val recyclerView = dialog.findViewById<RecyclerView>(R.id.bids_RV)
-        val bidCountView = dialog.findViewById<TextView>(R.id.bids_count)
+        if(counter== 0) {
+            Toast.makeText(activity,"No bids yet",Toast.LENGTH_SHORT).show()
+            return
+        }
+        biddersDialog.setContentView(R.layout.bidders_view_layout)
+        val recyclerView = biddersDialog.findViewById<RecyclerView>(R.id.bids_RV)
+        val bidCountView = biddersDialog.findViewById<TextView>(R.id.bids_count)
         bidCountView.setText(counter.toString())
         val bidsArray = ArrayList<bidders_bid_data>()
         appliedUsersList.values.forEach { bid_data ->
@@ -185,13 +193,17 @@ class auctioner_homeFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(activity)
         madapter = BiddersAdapter(activity!!, userList, bidsArray, viewClick)
         recyclerView.adapter = madapter
-        dialog.show()
+        biddersDialog.show()
     }
 
     private fun openOrCloseBidItem(itemSold: Boolean, position: Int, list: ArrayList<Items>) {
+     //   Toast.makeText(activity,list[position].itemName,Toast.LENGTH_SHORT).show()
         val dbRef = FirebaseFirestore.getInstance()
         dbRef.collection("Items").document(list[position].itemId)
-            .update("soldOut", itemSold)
+            .update("withDraw", itemSold)
+            .addOnSuccessListener {
+                Toast.makeText(activity,"Success",Toast.LENGTH_SHORT).show()
+            }
     }
 
     fun getAllItems() {
