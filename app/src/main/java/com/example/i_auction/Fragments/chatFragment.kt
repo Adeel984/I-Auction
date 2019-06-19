@@ -15,9 +15,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.i_auction.Adapters.ChatAdapter
 import com.example.i_auction.Models.ChatMessage
-
 import com.example.i_auction.R
-import com.example.i_auction.mySharedPref.Companion.chatName
+import com.example.i_auction.mySharedPref.Companion.toId
 import com.example.i_auction.mySharedPref.Companion.toUser
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
@@ -46,7 +45,7 @@ class chatFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_chat, container, false)
-        chatId = fromId + "-" + toUser?.uid
+        chatId = fromId + "-" + toId
         val list = chatId!!.split("-")
         val sorted = list.sorted()
         chatId = sorted[0] + "-" + sorted[1]
@@ -72,7 +71,7 @@ class chatFragment : Fragment() {
 
     private fun sendMsgtoDB() {
         val msgID = System.currentTimeMillis().toString()
-        val msgsData = ChatMessage(msgID,txtMsg.text.toString(),fromId!!,toUser?.uid!!,true)
+        val msgsData = ChatMessage(msgID,txtMsg.text.toString(),fromId!!, toId!!,true)
         dbRef.collection("Messages").document(chatId!!)
             .collection("MsgData").document(msgID)
             .set(msgsData)
