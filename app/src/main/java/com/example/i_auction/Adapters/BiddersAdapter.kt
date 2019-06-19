@@ -34,7 +34,7 @@ class BiddersAdapter(
         val user = userList[position]
         val bidDatax = bidData[position]
         holder.u_name.text = user?.userName
-        holder.bidAmount.text = bidDatax.bidAmount.toString()
+        holder.bidAmount.text ="Rs: "+ bidDatax.bidAmount.toString()
         holder.assurance.text = bidDatax.assurance
         if(bidData[position].accepted_bid) {
             holder.acceptBid.visibility = View.GONE
@@ -64,7 +64,7 @@ class BiddersAdapter(
         val bidAmount = view.findViewById<TextView>(R.id.bidder_bidAmount_row)
         val assurance = view.findViewById<TextView>(R.id.assurance_auctioner)
         val acceptBid = view.findViewById<Button>(R.id.accept_bid_btn)
-        val acceptedBid = view.findViewById<Button>(R.id.accepted_bid_btn)
+        val acceptedBid = view.findViewById<TextView>(R.id.accepted_bid_btn)
         val contactBidder = view.findViewById<Button>(R.id.contact_bidder)
     }
 }
