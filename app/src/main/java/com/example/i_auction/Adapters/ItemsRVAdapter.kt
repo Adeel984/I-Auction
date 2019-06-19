@@ -14,9 +14,7 @@ import com.example.i_auction.Models.Users
 import com.example.i_auction.R
 import com.example.i_auction.enums
 import com.example.i_auction.mySharedPref
-import com.example.i_auction.mySharedPref.Companion.appliedUsersList
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.squareup.picasso.Picasso
 
 class ItemsRVAdapter(var ctx:Context,var itemsList:ArrayList<Items>, var viewClick: (view:View,position:Int) -> Unit) : RecyclerView.Adapter<ItemsRVAdapter.myViewHolder>() {
@@ -25,7 +23,7 @@ class ItemsRVAdapter(var ctx:Context,var itemsList:ArrayList<Items>, var viewCli
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): myViewHolder {
         user = mySharedPref().getUserfromsharedPref(ctx,userId)
-    val view = LayoutInflater.from(ctx).inflate(R.layout.jobs_view_layout,null)
+    val view = LayoutInflater.from(ctx).inflate(R.layout.items_view_layout,null)
         return myViewHolder(view)
     }
 
@@ -35,37 +33,44 @@ class ItemsRVAdapter(var ctx:Context,var itemsList:ArrayList<Items>, var viewCli
 
     override fun onBindViewHolder(holder: myViewHolder, position: Int) {
         val item = itemsList[position]
-        holder.itemName.text = item.itemName
-        holder.itemDesc.text = item.itemDesc
-        holder.itemBrand.text = item.itemBrand
+        holder.itemName.text = item.itemBrand +" "+ item.itemName
+    //    holder.itemDesc.text = item.itemDesc
+    //    holder.itemBrand.text = item.itemBrand
         if(item.max_bid_amount !=null) {
-            holder.bidAmount.text = item.max_bid_amount
+            holder.bidAmount.text = "Rs: "+ item.max_bid_amount
         } else {
-            holder.bidAmount.text = item.min_bid_amount
+            holder.bidAmount.text ="Rs: "+ item.min_bid_amount
         }
         Picasso.get().load(item.itemImageUri).into(holder.itemImage)
         when (user?.accType) {
             enums.AUCTIONER.value->  {
                 holder.contactBtn.visibility = View.GONE
+                holder.bidAmount.visibility = View.GONE
                 when(item.withDraw) {
                     true -> {
                         holder.itemStatus.setText("Un-Available")
-                        holder.re_bid.visibility = View.VISIBLE
-                        holder.closeBid.visibility= View.GONE
+                        //holder.re_bid.visibility = View.VISIBLE
+                        //holder.closeBid.visibility= View.GONE
                     }
                     false -> {
                         holder.itemStatus.setText("Available")
-                        holder.re_bid.visibility = View.GONE
-                        holder.closeBid.visibility = View.VISIBLE
+                        //holder.re_bid.visibility = View.GONE
+                        //holder.closeBid.visibility = View.VISIBLE
                     }
                 }
             }
             enums.BIDDER.value-> {
+                holder.itemStatus.text = item.itemCategory
                 holder.contactBtn.visibility = View.VISIBLE
                 when(itemsList[position].bidded_users?.keys?.contains(userId)) {
                     true -> {
                         holder.applyForBid.visibility = View.GONE
                         holder.withDrawFrobBid.visibility = View.VISIBLE
+                        itemsList[position].bidded_users?.values?.forEach {
+                           if(it.accepted_bid == true)
+                            holder.withDrawFrobBid.visibility= View.GONE
+                        }
+
                         }
                         false -> {
                             holder.applyForBid.visibility = View.VISIBLE
@@ -84,12 +89,12 @@ class ItemsRVAdapter(var ctx:Context,var itemsList:ArrayList<Items>, var viewCli
             viewClick(it,position)
         }
 
-        holder.closeBid.setOnClickListener {view ->
-            viewClick(view,position)
-        }
-        holder.re_bid.setOnClickListener {
-            viewClick(it,position)
-        }
+//        holder.closeBid.setOnClickListener {view ->
+//            viewClick(view,position)
+//        }
+//        holder.re_bid.setOnClickListener {
+//            viewClick(it,position)
+//        }
         holder.cardView.setOnClickListener {
             viewClick(it,position)
         }
@@ -123,15 +128,15 @@ class ItemsRVAdapter(var ctx:Context,var itemsList:ArrayList<Items>, var viewCli
 
     inner class myViewHolder(view:View) : RecyclerView.ViewHolder(view){
         val itemName:TextView = view.findViewById(R.id.item_name_view)
-        val itemDesc:TextView = view.findViewById(R.id.item_desc_view)
-        val itemBrand:TextView = view.findViewById(R.id.item_brand_view)
+  //      val itemDesc:TextView = view.findViewById(R.id.item_desc_view)
+//        val itemBrand:TextView = view.findViewById(R.id.item_brand_view)
         val itemImage:ImageView = view.findViewById(R.id.item_image_view)
         val bidAmount:TextView = view.findViewById(R.id.bid_amount_view)
         val itemStatus:TextView = view.findViewById(R.id.item_status_view)
         val cardView:CardView = view.findViewById(R.id.item_cardView)
         // Auctioner Buttons
-        val closeBid:Button = view.findViewById(R.id.close_bid_btn)
-        val re_bid:Button = view.findViewById(R.id.re_bid_btn)
+//        val closeBid:Button = view.findViewById(R.id.close_bid_btn)
+//        val re_bid:Button = view.findViewById(R.id.re_bid_btn)
         //Bidder Buttons
         val applyForBid:Button= view.findViewById(R.id.bid_now_view)
         val withDrawFrobBid:Button = view.findViewById(R.id.withdraw_bid_view)
