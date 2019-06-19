@@ -218,7 +218,7 @@ class RegisterFragment : Fragment() {
             GALLERY_IMAGE_REQ_CODE -> {
                 if (resultCode == Activity.RESULT_OK) {
                     val imageuri = data!!.getData()
-                    val bitFill = File(imageuri?.toString())
+                   // val bitFill = File(imageuri?.toString())
                     val bytes = ByteArrayOutputStream();
                     val bitmap = MediaStore.Images.Media.getBitmap(activity!!.contentResolver, imageuri)
                     bitmap.compress(Bitmap.CompressFormat.JPEG, 10, bytes);
