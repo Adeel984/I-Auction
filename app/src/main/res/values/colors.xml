@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
+    <color name="colorPrimary">#4064BA</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
     <color name="transparent">#ffff</color>
     <color name="black"> #000000 </color>
     <color name="ligh_pink">#ffb6c1</color>
+    <color name="backgroud_app_color">#4064BA</color>
+    <color name="button_color">#7481C7</color>
+    <color name="purple">#800080</color>
 </resources>
