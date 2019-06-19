@@ -2,8 +2,8 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
        android:shape="oval">
     <corners android:radius="5dp"/>
-    <solid android:color="@color/transparent"/>
-    <stroke android:width="3dp" android:color="@color/colorAccent"/>
+    <solid android:color="@color/button_color"/>
+    <stroke android:width="3dp" android:color="@color/purple"/>
 
 
 </shape>
