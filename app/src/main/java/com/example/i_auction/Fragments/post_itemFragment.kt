@@ -154,8 +154,8 @@ class post_itemFragment : Fragment() {
 //                    val input:InputStream? = this@RegisterActivity.contentResolver.openInputStream(imageuri)
                     //                  val bitmap = BitmapFactory.decodeStream(input)
                     val bitmap = MediaStore.Images.Media.getBitmap(activity!!.contentResolver, imageuri)
-                    val newb = Bitmap.createScaledBitmap(bitmap, 100, 100, true);
-                    itemImage.setImageBitmap(newb)
+                  //  val newb = Bitmap.createScaledBitmap(bitmap, 100, 100, true);
+                    itemImage.setImageBitmap(bitmap)
 //                    userImg?.alpha = 0f
                     SELECTED_PHOTO_URI = imageuri
                     //         userImg.visibility = View.INVISIBLE
@@ -185,10 +185,7 @@ class post_itemFragment : Fragment() {
 
     private fun addListenersToDropDown() {
         itemName.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-
-
-            }
+            override fun onNothingSelected(parent: AdapterView<*>?) { }
 
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 itemNameVal = parent!!.getItemAtPosition(position).toString()
