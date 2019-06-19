@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
-             android:background="@color/transparent"
+             android:background="@color/backgroud_app_color"
              android:layout_width="match_parent"
              android:layout_height="match_parent" xmlns:app="http://schemas.android.com/apk/res-auto"
              tools:context=".Fragments.RegisterFragment">
@@ -41,6 +41,7 @@
                 android:layout_marginEnd="24dp" android:layout_marginRight="24dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+            <!--style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"-->
 
             <EditText
                     android:layout_width="match_parent"
@@ -146,7 +147,7 @@
                 android:text="@string/create"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@color/colorAccent"
+                android:background="@color/button_color"
                 android:textColor="@color/transparent"
                 android:id="@+id/register_btn"
                 app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="32dp"
