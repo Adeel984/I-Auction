@@ -10,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.i_auction.Adapters.ItemsRVAdapter
@@ -19,6 +20,7 @@ import com.example.i_auction.Models.bidders_bid_data
 import com.example.i_auction.NameEnums
 import com.example.i_auction.mySharedPref.Companion.appliedUsersList
 import com.example.i_auction.R
+import com.example.i_auction.mySharedPref.Companion.toId
 import com.example.i_auction.mySharedPref.Companion.toUser
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.DocumentChange
@@ -29,14 +31,7 @@ import com.squareup.picasso.Picasso
 import java.lang.Exception
 
 // TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- *
- */
 class bidder_HomeFragment : Fragment() {
     lateinit var adapter: ItemsRVAdapter
     var categorisedList = ArrayList<Items>()
@@ -50,8 +45,8 @@ class bidder_HomeFragment : Fragment() {
     lateinit var bidderClicked: (views: View, position: Int) -> Unit
     lateinit var recyler: RecyclerView
     var bid_dataObj = bidders_bid_data()
-    var assuranceText:EditText? = null
-    val auctionerList = ArrayList<Users>()
+    var assuranceText: EditText? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -59,7 +54,6 @@ class bidder_HomeFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_bidder__home, container, false)
         val categorySpinner = view.findViewById<Spinner>(R.id.bidder_home_spinner)
-
         ArrayAdapter.createFromResource(activity!!, R.array.category_items_array, android.R.layout.simple_spinner_item)
             .also {
                 it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -83,7 +77,7 @@ class bidder_HomeFragment : Fragment() {
 
         }
         recyler = view.findViewById(R.id.bidder_main_rv)
-        recyler.layoutManager = LinearLayoutManager(activity!!)
+        recyler.layoutManager = GridLayoutManager(activity!!, 2)
         wait_dialog = Dialog(activity!!)
         dialog = Dialog(activity!!)
         bidderClicked = { views, position ->
@@ -94,71 +88,78 @@ class bidder_HomeFragment : Fragment() {
                     else applyOrWithDrawFromBid(true, position, "0", itemsList)
                 }
                 R.id.contact_auctioner -> {
-                    toUser = auctionerList[position]
+                    if (categorisedItems) {
+                        toId = categorisedList[position].itemUploaderId
+                    } else {
+                        toId = itemsList[position].itemUploaderId
+                    }
+
 //                    Handler().postDelayed({
 //                    },300000)
-                        activity!!
-                            .supportFragmentManager
-                            .beginTransaction()
-                            .replace(R.id.dashboard_container, chatFragment())
-                            .commit()
-                   // Toast.makeText(activity,bool.toString(),Toast.LENGTH_SHORT).show()
+                    activity!!
+                        .supportFragmentManager
+                        .beginTransaction()
+                        .replace(R.id.dashboard_container, chatFragment())
+                        .addToBackStack("nothing")
+                        .commit()
+                    // Toast.makeText(activity,bool.toString(),Toast.LENGTH_SHORT).show()
 
 //                    DashboardActivity().title = "MyName"
                 }
             }
         }
         adapter = ItemsRVAdapter(activity!!, itemsList, bidderClicked)
-        recyler.layoutManager = LinearLayoutManager(activity!!)
+        recyler.layoutManager = GridLayoutManager(activity!!, 2)
         recyler.adapter = adapter
-        getAllItems()
+        if(itemsList.size == 0) getAllItems()
         return view
     }
 
-    private fun getUser(auctionerId: String)  {
-        val dbRef = FirebaseFirestore.getInstance()
-        dbRef.collection("Users").document("UserData")
-            .collection(NameEnums.Auctioner.names).document(auctionerId)
-            .get()
-            .addOnSuccessListener {
-                if(it.exists()){
-                    val auctioner = it.toObject(Users::class.java)
-                    auctionerList.add(auctioner!!)
-                }
-            }
-            .addOnFailureListener {
-                Toast.makeText(activity,it.message,Toast.LENGTH_SHORT).show()
-            }
-    }
+//    private fun getUser(auctionerId: String) {
+//        val dbRef = FirebaseFirestore.getInstance()
+//        dbRef.collection("Users").document("UserData")
+//            .collection(NameEnums.Auctioner.names).document(auctionerId)
+//            .get()
+//            .addOnSuccessListener {
+//                if (it.exists()) {
+//                    val auctioner = it.toObject(Users::class.java)
+//                    auctionerList.add(auctioner!!)
+//                    newAuctionerList.put(auctionerId,auctioner)
+//                    Log.d("AuctionerData", "${auctioner.uid} , ${auctioner.userName}")
+//                }
+//            }
+//            .addOnFailureListener {
+//                Toast.makeText(activity, it.message, Toast.LENGTH_SHORT).show()
+//            }
+//    }
 
     private fun showCategorisedItems(names: String, categorised: Boolean) {
         when (categorised) {
             true -> {
-                auctionerList.clear()
                 adapter = ItemsRVAdapter(activity!!, categorisedList, bidderClicked)
+                recyler.layoutManager = GridLayoutManager(activity!!, 2)
                 recyler.adapter = adapter
                 categorisedList.clear()
                 itemsList.forEach { item ->
                     if (item.itemCategory.equals(names)) {
-                        getUser(item.itemUploaderId)
-                        Log.d("Category", names)
                         categorisedList.add(item)
                         adapter.notifyDataSetChanged()
                     }
                 }
             }
             else -> {
-                auctionerList.clear()
-                itemsList.forEach {item ->
-                    getUser(item.itemUploaderId)
-                }
                 adapter = ItemsRVAdapter(activity!!, itemsList, bidderClicked)
+                recyler.layoutManager = GridLayoutManager(activity!!, 2)
                 recyler.adapter = adapter
                 adapter.notifyDataSetChanged()
             }
         }
+    }
 
-
+    override fun onResume() {
+        super.onResume()
+        itemsList.clear()
+        categorisedList.clear()
     }
 
     private fun showBidDialogue(position: Int) {
@@ -188,9 +189,10 @@ class bidder_HomeFragment : Fragment() {
             item.bidded_users?.values?.forEach {
                 if (it.bidAmount >= maxVal) {
                     maxVal = it.bidAmount
+                    maxBidAmount.setText(maxVal.toString())
                 }
             }
-            maxBidAmount.setText(maxVal.toString())
+
         } catch (e: Exception) {
             e.message
         }
@@ -209,13 +211,12 @@ class bidder_HomeFragment : Fragment() {
         }
         applyBid.setOnClickListener {
             value = bidValue.text.toString().toInt()
-            Toast.makeText(activity,item.min_bid_amount,Toast.LENGTH_SHORT).show()
-            if(assuranceText!!.text.isNullOrEmpty()) {
-                Toast.makeText(activity,"Please provide assurance",Toast.LENGTH_SHORT).show()
+            if (assuranceText!!.text.isNullOrEmpty()) {
+                Toast.makeText(activity, "Please provide assurance", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-            if(value >= item.min_bid_amount.toInt()) {
-                Toast.makeText(activity,value.toString(),Toast.LENGTH_SHORT).show()
+            if (value >= item.min_bid_amount.toInt()) {
+//                Toast.makeText(activity, value.toString(), Toast.LENGTH_SHORT).show()
                 wait_dialog.setContentView(R.layout.dialog_r)
                 wait_dialog.setCancelable(false)
                 val title = wait_dialog.findViewById<TextView>(R.id.dialog_title)
@@ -265,7 +266,13 @@ class bidder_HomeFragment : Fragment() {
 //                    dbRef.collection("Items").document(categorisedList[position].itemId).
 //                        update("appliedUsers",appliedUsersList)
 //                } else {
-                bid_dataObj = bidders_bid_data(userId!!,assuranceText?.text.toString(),bidValue.toInt(),list[position].itemId,false)
+                bid_dataObj = bidders_bid_data(
+                    userId!!,
+                    assuranceText?.text.toString(),
+                    bidValue.toInt(),
+                    list[position].itemId,
+                    false
+                )
                 appliedUsersList.put(userId, bid_dataObj)
                 if (bidValue.toInt() > maxVal) {
                     dbRef.collection("Items").document(list[position].itemId)
@@ -306,7 +313,8 @@ class bidder_HomeFragment : Fragment() {
                         DocumentChange.Type.ADDED -> {
                             val item = dc.document.toObject(Items::class.java)
                             itemsList.add(item)
-                            Log.d("Item", item.toString())
+//                            getUser(item.itemUploaderId)
+//                            Log.d("AuctionerId",item.itemUploaderId)
                             adapter.notifyDataSetChanged()
                         }
                         DocumentChange.Type.MODIFIED -> {
@@ -347,6 +355,7 @@ class bidder_HomeFragment : Fragment() {
                         }
                     }
                 }
-            })
+            }
+            )
     }
 }
