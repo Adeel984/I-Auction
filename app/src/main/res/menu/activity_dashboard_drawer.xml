@@ -14,6 +14,11 @@
             android:id="@+id/upcoming_items"
             android:title="@string/upcoming_items"/>
         <item
+                android:id="@+id/my_bidItems"
+                android:icon="@drawable/ic_menu_camera"
+                android:title="@string/my_items"/>
+
+        <item
                 android:id="@+id/cell_phones"
                 android:icon="@drawable/ic_menu_camera"
                 android:title="@string/mobile_phones"/>
