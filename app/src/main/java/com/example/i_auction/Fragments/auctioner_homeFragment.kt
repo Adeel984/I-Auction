@@ -41,7 +41,7 @@ class auctioner_homeFragment : Fragment() {
     private val userId = FirebaseAuth.getInstance().currentUser?.uid
     val userList = ArrayList<Users?>()
     lateinit var viewClick: (view: View, position: Int) -> Unit
-
+    var recyclerView:RecyclerView?= null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -78,14 +78,14 @@ class auctioner_homeFragment : Fragment() {
         }
         auctionerClicked = { views, position ->
             when (views.id) {
-//                R.id.re_bid_btn -> {
-//                    if (categorisedItems) openOrCloseBidItem(false, position, categorisedList)
-//                    else openOrCloseBidItem(false, position, itemList)
-//                }
-//                R.id.close_bid_btn -> {
-//                    if(categorisedItems) openOrCloseBidItem(true, position, categorisedList)
-//                    else openOrCloseBidItem(true, position, itemList)
-//                }
+                R.id.re_bid_btn -> {
+                    if (categorisedItems) openOrCloseBidItem(false, position, categorisedList)
+                    else openOrCloseBidItem(false, position, itemList)
+                }
+                R.id.close_bid_btn -> {
+                    if(categorisedItems) openOrCloseBidItem(true, position, categorisedList)
+                    else openOrCloseBidItem(true, position, itemList)
+                }
 
 
                 R.id.item_cardView -> {
@@ -105,7 +105,7 @@ class auctioner_homeFragment : Fragment() {
     private fun contactBidder(position: Int) {
         toId = userList[position]!!.uid
         biddersDialog.dismiss()
-        Log.d("User is", toUser!!.userName)
+//        Log.d("User is", toUser!!.userName)
         activity!!
             .supportFragmentManager
             .beginTransaction()
@@ -115,10 +115,27 @@ class auctioner_homeFragment : Fragment() {
     }
 
     private fun acceptBid(position: Int) {
-        appliedUsersList.values.forEach { bidders_bid_data ->
-            if (bidders_bid_data.bidder_id.equals(userList[position]!!.uid)) {
-                bidders_bid_data.accepted_bid = true
-                appliedUsersList[bidders_bid_data.bidder_id] = bidders_bid_data
+        val userId = userList[position]?.uid
+//        Log.d("BiddersId",userId)
+//        var biddersData:bidders_bid_data? = null
+//        for( i in appliedUsersList.values) {
+//
+//            Log.d("BiddersData",i.toString())
+//            when(bidersData.bidder_id) {
+//                userId -> {
+//
+//                    appliedUsersList.put(bidersData.bidder_id,biddersData)
+//                    Log.d("BiddersId",bidersData.bidder_id)
+//
+//                }
+//
+//            }
+//        }
+
+        appliedUsersList.values.forEach { bidders_data ->
+            if(bidders_data.bidder_id.equals(userId)) {
+                val biddersData  = bidders_bid_data(bidders_data.bidder_id,bidders_data.assurance,bidders_data.bidAmount,bidders_data.itemId,true)
+                appliedUsersList.put(userId,biddersData)
             }
         }
         val dbRef = FirebaseFirestore.getInstance()
@@ -126,6 +143,12 @@ class auctioner_homeFragment : Fragment() {
             .update("bidded_users", appliedUsersList)
             .addOnSuccessListener {
                 Toast.makeText(activity, "Success", Toast.LENGTH_SHORT).show()
+                val bidsArray = ArrayList<bidders_bid_data>()
+                appliedUsersList.values.forEach { bid_data ->
+                    bidsArray.add(bid_data)
+                }
+                madapter = BiddersAdapter(activity!!, userList, bidsArray, viewClick)
+                recyclerView!!.adapter = madapter
                 madapter!!.notifyDataSetChanged()
             }
             .addOnFailureListener {
@@ -183,16 +206,16 @@ class auctioner_homeFragment : Fragment() {
             return
         }
         biddersDialog.setContentView(R.layout.bidders_view_layout)
-        val recyclerView = biddersDialog.findViewById<RecyclerView>(R.id.bids_RV)
+        recyclerView = biddersDialog.findViewById<RecyclerView>(R.id.bids_RV)
         val bidCountView = biddersDialog.findViewById<TextView>(R.id.bids_count)
         bidCountView.setText(counter.toString())
         val bidsArray = ArrayList<bidders_bid_data>()
         appliedUsersList.values.forEach { bid_data ->
             bidsArray.add(bid_data)
         }
-        recyclerView.layoutManager = LinearLayoutManager(activity)
+        recyclerView!!.layoutManager = LinearLayoutManager(activity)
         madapter = BiddersAdapter(activity!!, userList, bidsArray, viewClick)
-        recyclerView.adapter = madapter
+        recyclerView!!.adapter = madapter
         biddersDialog.show()
     }
 
