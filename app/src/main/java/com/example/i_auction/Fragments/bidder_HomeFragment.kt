@@ -156,13 +156,7 @@ class bidder_HomeFragment : Fragment() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        itemsList.clear()
-        categorisedList.clear()
-    }
-
-    private fun showBidDialogue(position: Int) {
+     private fun showBidDialogue(position: Int) {
         dialog.setContentView(R.layout.bidder_show_popup)
         val itemName = dialog.findViewById<TextView>(R.id.item_name_bidder_view)
         val plusBtn = dialog.findViewById<Button>(R.id.plus_controller)
