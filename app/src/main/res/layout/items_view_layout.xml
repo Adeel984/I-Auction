@@ -41,29 +41,30 @@
                     app:layout_constraintTop_toBottomOf="parent" android:layout_marginLeft="8dp"/>
 
             <!--Buttons for Auctioner -->
-            <!--<Button-->
-                    <!--android:text="Close"-->
-                    <!--android:textStyle="bold"-->
-                    <!--android:textColor="@color/transparent"-->
-                    <!--android:layout_width="30dp"-->
-                    <!--android:visibility="gone"-->
-                    <!--android:background="@drawable/button_auctioner_disable"-->
-                    <!--android:layout_height="30dp"-->
-                    <!--android:id="@+id/close_bid_btn" android:layout_marginEnd="8dp" android:layout_marginRight="8dp"-->
-                    <!--app:layout_constraintEnd_toEndOf="parent" app:layout_constraintBottom_toBottomOf="parent"-->
-                    <!--android:layout_marginBottom="8dp"/>-->
+            <Button
+                    android:text="X"
+                    app:layout_constraintTop_toBottomOf="@id/item_name_view"
+                    android:textStyle="bold"
+                    android:textColor="@color/transparent"
+                    android:layout_width="30dp"
+                    android:visibility="gone"
+                    android:background="@drawable/button_auctioner_disable"
+                    android:layout_height="30dp"
+                    android:id="@+id/close_bid_btn" android:layout_marginEnd="8dp" android:layout_marginRight="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginBottom="18dp"/>
 
-            <!--<Button-->
-                    <!--android:text="Re-bid"-->
-                    <!--android:textStyle="bold"-->
-                    <!--android:textColor="@color/transparent"-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:visibility="gone"-->
-                    <!--android:background="@drawable/button_apply_for_bid"-->
-                    <!--android:layout_height="43dp"-->
-                    <!--android:id="@+id/re_bid_btn" android:layout_marginEnd="8dp" android:layout_marginRight="8dp"-->
-                    <!--app:layout_constraintEnd_toEndOf="parent" app:layout_constraintBottom_toBottomOf="parent"-->
-                    <!--android:layout_marginBottom="8dp"/>-->
+            <Button
+                    app:layout_constraintTop_toBottomOf="@id/item_name_view"
+                    android:textStyle="bold"
+                    android:textColor="@color/transparent"
+                    android:layout_width="30dp"
+                    android:visibility="gone"
+                    android:background="@drawable/check"
+                    android:layout_height="30dp"
+                    android:id="@+id/re_bid_btn" android:layout_marginEnd="8dp" android:layout_marginRight="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    android:layout_marginBottom="8dp"/>
             <!--Buttons for Bidder -->
             <Button
                     android:text="Bid"
