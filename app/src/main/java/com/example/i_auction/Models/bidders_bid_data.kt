@@ -7,5 +7,7 @@ class bidders_bid_data (
     val itemId:String ="",
     var accepted_bid:Boolean = false
 ) {
-
+    override fun toString(): String {
+        return "bidders_bid_data(bidder_id='$bidder_id', assurance='$assurance', bidAmount=$bidAmount, itemId='$itemId', accepted_bid=$accepted_bid)"
+    }
 }
