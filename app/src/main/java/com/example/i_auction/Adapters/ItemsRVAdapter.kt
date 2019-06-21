@@ -36,26 +36,27 @@ class ItemsRVAdapter(var ctx:Context,var itemsList:ArrayList<Items>, var viewCli
         holder.itemName.text = item.itemBrand +" "+ item.itemName
     //    holder.itemDesc.text = item.itemDesc
     //    holder.itemBrand.text = item.itemBrand
-        if(item.max_bid_amount !=null) {
-            holder.bidAmount.text = "Rs: "+ item.max_bid_amount
-        } else {
-            holder.bidAmount.text ="Rs: "+ item.min_bid_amount
-        }
+        holder.bidAmount.text ="Rs: "+ item.min_bid_amount
+//        if(item.max_bid_amount !=null) {
+//            holder.bidAmount.text = "Rs: "+ item.max_bid_amount
+//        } else {
+//
+//        }
         Picasso.get().load(item.itemImageUri).into(holder.itemImage)
         when (user?.accType) {
             enums.AUCTIONER.value->  {
                 holder.contactBtn.visibility = View.GONE
-                holder.bidAmount.visibility = View.GONE
+              //  holder.bidAmount.visibility = View.GONE
                 when(item.withDraw) {
                     true -> {
                         holder.itemStatus.setText("Un-Available")
-                        //holder.re_bid.visibility = View.VISIBLE
-                        //holder.closeBid.visibility= View.GONE
+                        holder.re_bid.visibility = View.VISIBLE
+                        holder.closeBid.visibility= View.GONE
                     }
                     false -> {
                         holder.itemStatus.setText("Available")
-                        //holder.re_bid.visibility = View.GONE
-                        //holder.closeBid.visibility = View.VISIBLE
+                        holder.re_bid.visibility = View.GONE
+                        holder.closeBid.visibility = View.VISIBLE
                     }
                 }
             }
@@ -89,12 +90,12 @@ class ItemsRVAdapter(var ctx:Context,var itemsList:ArrayList<Items>, var viewCli
             viewClick(it,position)
         }
 
-//        holder.closeBid.setOnClickListener {view ->
-//            viewClick(view,position)
-//        }
-//        holder.re_bid.setOnClickListener {
-//            viewClick(it,position)
-//        }
+        holder.closeBid.setOnClickListener {view ->
+            viewClick(view,position)
+        }
+        holder.re_bid.setOnClickListener {
+            viewClick(it,position)
+        }
         holder.cardView.setOnClickListener {
             viewClick(it,position)
         }
@@ -135,8 +136,8 @@ class ItemsRVAdapter(var ctx:Context,var itemsList:ArrayList<Items>, var viewCli
         val itemStatus:TextView = view.findViewById(R.id.item_status_view)
         val cardView:CardView = view.findViewById(R.id.item_cardView)
         // Auctioner Buttons
-//        val closeBid:Button = view.findViewById(R.id.close_bid_btn)
-//        val re_bid:Button = view.findViewById(R.id.re_bid_btn)
+        val closeBid:Button = view.findViewById(R.id.close_bid_btn)
+        val re_bid:Button = view.findViewById(R.id.re_bid_btn)
         //Bidder Buttons
         val applyForBid:Button= view.findViewById(R.id.bid_now_view)
         val withDrawFrobBid:Button = view.findViewById(R.id.withdraw_bid_view)
