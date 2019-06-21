@@ -133,6 +133,11 @@ class DashboardActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                     .replace(R.id.dashboard_container,upcomingAuctionsFragment())
                     .commit()
             }
+            R.id.my_bidItems -> {
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.dashboard_container,bidders_bidItems())
+                    .commit()
+            }
 
             R.id.bidder_items -> {
                 supportFragmentManager.beginTransaction()
