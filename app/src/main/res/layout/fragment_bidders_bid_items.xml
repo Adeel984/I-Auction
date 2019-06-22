@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
              tools:context=".Fragments.bidders_bidItems">
+  <Spinner
+          android:id="@+id/myItem_Spinner"
+          android:layout_width="match_parent" android:layout_height="wrap_content"/>
 
   <androidx.recyclerview.widget.RecyclerView
           android:id="@+id/biddersItemsRV"
+          android:layout_below="@id/myItem_Spinner"
           android:layout_width="match_parent"
           android:layout_height="match_parent"/>
 
-</FrameLayout>
+</RelativeLayout>
