@@ -79,4 +79,12 @@
         <item>Orient</item>
         <item>Haier</item>
     </string-array>
+
+    //Bidder's Choice array
+    <string-array name="bidders_choice">
+        <item>ALL</item>
+        <item>Purchased</item>
+        <item>Pending</item>
+        <item>Approved</item>
+    </string-array>
 </resources>
