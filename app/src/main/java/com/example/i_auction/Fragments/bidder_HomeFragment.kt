@@ -337,6 +337,7 @@ class bidder_HomeFragment : Fragment() {
                                     if (items.itemId.equals(item?.itemId)) {
                                         itemsList.removeAt(index)
                                         adapter.notifyItemRemoved(index)
+                                        return@EventListener
                                     }
                                 }
                                 if (categorisedItems) {
