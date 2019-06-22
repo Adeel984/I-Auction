@@ -1,7 +1,6 @@
 package com.example.i_auction.Fragments
 
 
-
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -24,16 +23,18 @@ class bidders_bidItems : Fragment() {
     private val categorisedList = ArrayList<Items>()
     private var categorisedItems: Boolean = false
     private val userId = FirebaseAuth.getInstance().currentUser!!.uid
-
+    private lateinit var spinner: Spinner
     private lateinit var adapter: ItemsRVAdapter
     private val itemList = ArrayList<Items>()
+    private lateinit var viewClick: (view: View, position: Int) -> Unit
+    lateinit var recyler: RecyclerView
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_bidders_bid_items, container, false)
-        val viewClick: (view: View, position: Int) -> Unit = { views, position ->
+        viewClick = { views, position ->
             when (views.id) {
                 R.id.withdraw_bid_view -> {
                     if (categorisedItems) applyOrWithDrawFromBid(position, categorisedList)
@@ -54,13 +55,92 @@ class bidders_bidItems : Fragment() {
                 }
             }
         }
+        //Initialising views
+        spinner = view.findViewById(R.id.myItem_Spinner)
+        ArrayAdapter.createFromResource(activity!!, R.array.bidders_choice, android.R.layout.simple_spinner_item)
+            .also {
+                it.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                spinner.adapter = it
+            }
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
 
-       val recyclerView: RecyclerView = view.findViewById(R.id.biddersItemsRV)
-        recyclerView.layoutManager = GridLayoutManager(activity!!, 2)
+            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                if (position == 0) {
+                    categorisedItems = false
+                    getSelectedData(position)
+                } else {
+                    categorisedItems = true
+                    getSelectedData(position)
+                }
+            }
+        }
+        recyler = view.findViewById(R.id.biddersItemsRV)
+        recyler.layoutManager = GridLayoutManager(activity!!, 2)
         adapter = ItemsRVAdapter(activity!!, itemList, viewClick)
-        recyclerView.adapter = adapter
+        recyler.adapter = adapter
         if (itemList.size.equals(0)) getAllBiddersBidItesm()
         return view
+    }
+
+    private fun getSelectedData(position: Int) {
+        categorisedList.clear()
+        when (categorisedItems) {
+            true -> {
+                when (position) {
+                    1 -> {
+                        // Bidder's Purchased items
+                        itemList.forEach { item ->
+                            if (item.purchaserId != null && item.purchaserId.equals(userId)) {
+                                categorisedList.add(item)
+                                adapter = ItemsRVAdapter(activity!!, categorisedList, viewClick)
+                                recyler.adapter = adapter
+                                adapter.notifyDataSetChanged()
+                            }
+                            else {
+                                adapter = ItemsRVAdapter(activity!!, categorisedList, viewClick)
+                                recyler.adapter = adapter
+                                adapter.notifyDataSetChanged()
+                            }
+                        }
+                    }
+                    2 -> {
+                        // Bidder's Pending bid data which has not yet been accepted by auctioner
+                        itemList.forEach { item ->
+                            item.bidded_users!!.values.forEach {
+                                if (it.bidder_id.equals(userId) && it.accepted_bid == false) {
+                                    categorisedList.add(item)
+                                    adapter = ItemsRVAdapter(activity!!, categorisedList, viewClick)
+                                    recyler.adapter = adapter
+                                    adapter.notifyDataSetChanged()
+                                }
+                            }
+                        }
+                    }
+                    3 -> {
+                        // Bidder's accepted bid data
+                        itemList.forEach { item ->
+                            item.bidded_users!!.values.forEach {
+                                if (it.bidder_id.equals(userId) && it.accepted_bid == true) {
+                                    categorisedList.add(item)
+                                    adapter = ItemsRVAdapter(activity!!, categorisedList, viewClick)
+                                    recyler.adapter = adapter
+                                    adapter.notifyDataSetChanged()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            else -> {
+                adapter = ItemsRVAdapter(activity!!, itemList, viewClick)
+                recyler.adapter = adapter
+                adapter.notifyDataSetChanged()
+            }
+        }
+
     }
 
     private fun getAllBiddersBidItesm() {
