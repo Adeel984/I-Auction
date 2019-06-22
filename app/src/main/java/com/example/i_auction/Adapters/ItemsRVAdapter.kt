@@ -68,10 +68,9 @@ class ItemsRVAdapter(var ctx:Context,var itemsList:ArrayList<Items>, var viewCli
                         holder.applyForBid.visibility = View.GONE
                         holder.withDrawFrobBid.visibility = View.VISIBLE
                         itemsList[position].bidded_users?.values?.forEach {
-                           if(it.accepted_bid == true)
+                           if(it.bidder_id == userId && it.accepted_bid == true)
                             holder.withDrawFrobBid.visibility= View.GONE
                         }
-
                         }
                         false -> {
                             holder.applyForBid.visibility = View.VISIBLE
