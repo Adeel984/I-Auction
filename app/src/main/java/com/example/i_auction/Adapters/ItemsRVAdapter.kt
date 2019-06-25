@@ -1,6 +1,7 @@
 package com.example.i_auction.Adapters
 
 import android.content.Context
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,6 +9,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.i_auction.Models.Items
 import com.example.i_auction.Models.Users
@@ -50,11 +52,13 @@ class ItemsRVAdapter(var ctx:Context,var itemsList:ArrayList<Items>, var viewCli
                 when(item.withDraw) {
                     true -> {
                         holder.itemStatus.setText("Un-Available")
+                        holder.itemStatus.setTextColor(ContextCompat.getColor(ctx,R.color.colorAccent))
                         holder.re_bid.visibility = View.VISIBLE
                         holder.closeBid.visibility= View.GONE
                     }
                     false -> {
                         holder.itemStatus.setText("Available")
+                        holder.itemStatus.setTextColor(ContextCompat.getColor(ctx,R.color.green))
                         holder.re_bid.visibility = View.GONE
                         holder.closeBid.visibility = View.VISIBLE
                     }
@@ -62,6 +66,7 @@ class ItemsRVAdapter(var ctx:Context,var itemsList:ArrayList<Items>, var viewCli
             }
             enums.BIDDER.value-> {
                 holder.itemStatus.text = item.itemCategory
+                holder.itemStatus.setTextColor(ContextCompat.getColor(ctx,R.color.amt_color))
                 holder.contactBtn.visibility = View.VISIBLE
                 when(itemsList[position].bidded_users?.keys?.contains(userId)) {
                     true -> {
