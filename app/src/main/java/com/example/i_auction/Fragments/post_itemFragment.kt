@@ -39,29 +39,29 @@ private const val ARG_PARAM2 = "param2"
  *
  */
 class post_itemFragment : Fragment() {
+    private var newbmp: Bitmap? = null
+    private var bitmap: Bitmap? = null
     private var selectedDate: String? = null
     private var selectedTime: String? = null
     private var timeLast: String? = null
-    var itemNameVal: String = ""
-    var itemCatVal: String = ""
-    var itemBrandVal: String = ""
-    val defaultVal = "---"
-    var GALLERY_IMAGE_REQ_CODE = 44
-    var GALLERY_PERMISSION_CODE = 22
-    var SELECTED_PHOTO_URI: Uri? = null
-    val userId = FirebaseAuth.getInstance().currentUser!!.uid
-    lateinit var itemImage: ImageView
-    lateinit var itemCategory: Spinner
-    lateinit var itemBrand: Spinner
-    lateinit var itemName: Spinner
-    lateinit var itemDesc: EditText
-    lateinit var itemMinBidAmount: EditText
-    lateinit var timeOpener: ImageView
-    lateinit var end_bid_time: TextView
-    lateinit var submitBtn: Button
-    lateinit var dialog: Dialog
-    lateinit var timePicker: ImageButton
-
+    private var itemCatVal: String = ""
+    private var itemBrandVal: String = ""
+    private val defaultVal = "---"
+    private var GALLERY_IMAGE_REQ_CODE = 44
+    private var GALLERY_PERMISSION_CODE = 22
+    private var SELECTED_PHOTO_URI: Uri? = null
+    private val userId = FirebaseAuth.getInstance().currentUser!!.uid
+    private lateinit var itemImage: ImageView
+    private lateinit var itemCategory: Spinner
+    private lateinit var itemBrand: Spinner
+    private lateinit var itemName: EditText
+    private lateinit var itemDesc: EditText
+    private lateinit var itemMinBidAmount: EditText
+    private lateinit var timeOpener: ImageView
+    private lateinit var end_bid_time: TextView
+    private lateinit var submitBtn: Button
+    private lateinit var dialog: Dialog
+    private lateinit var timePicker: ImageButton
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -79,7 +79,7 @@ class post_itemFragment : Fragment() {
         itemCategory = view.findViewById(R.id.spinner_itemCategory)
         itemImage = view.findViewById(R.id.item_image_bidder_view)
         itemBrand = view.findViewById(R.id.spinner_itemBrand)
-        itemName = view.findViewById(R.id.spinner_itemName)
+        itemName = view.findViewById(R.id.itemName_et)
         itemDesc = view.findViewById(R.id.item_description)
         itemMinBidAmount = view.findViewById(R.id.min_bid)
         timeOpener = view.findViewById(R.id.time_opener)
@@ -153,9 +153,9 @@ class post_itemFragment : Fragment() {
                     val imageuri = data!!.getData()
 //                    val input:InputStream? = this@RegisterActivity.contentResolver.openInputStream(imageuri)
                     //                  val bitmap = BitmapFactory.decodeStream(input)
-                    val bitmap = MediaStore.Images.Media.getBitmap(activity!!.contentResolver, imageuri)
-                  //  val newb = Bitmap.createScaledBitmap(bitmap, 100, 100, true);
-                    itemImage.setImageBitmap(bitmap)
+                    bitmap = MediaStore.Images.Media.getBitmap(activity!!.contentResolver, imageuri)
+                    newbmp = Bitmap.createScaledBitmap(bitmap!!, 64, 128,true);
+                    itemImage.setImageBitmap(newbmp)
 //                    userImg?.alpha = 0f
                     SELECTED_PHOTO_URI = imageuri
                     //         userImg.visibility = View.INVISIBLE
@@ -176,30 +176,9 @@ class post_itemFragment : Fragment() {
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 itemBrand.adapter = adapter
             }
-        ArrayAdapter.createFromResource(activity!!, R.array.item_name_array, android.R.layout.simple_spinner_item)
-            .also { adapter ->
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                itemName.adapter = adapter
-            }
     }
 
     private fun addListenersToDropDown() {
-        itemName.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) { }
-
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                itemNameVal = parent!!.getItemAtPosition(position).toString()
-            }
-        }
-        itemBrand.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-
-            }
-
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                itemBrandVal = parent!!.getItemAtPosition(position).toString()
-            }
-        }
         itemCategory.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
 
@@ -224,8 +203,8 @@ class post_itemFragment : Fragment() {
             Toast.makeText(activity, "Please Select Item Brand", Toast.LENGTH_SHORT).show()
             return
         }
-        if (itemNameVal.equals(defaultVal)) {
-            Toast.makeText(activity, "Please Select Item Name", Toast.LENGTH_SHORT).show()
+        if (itemName.text.toString().isNullOrEmpty()) {
+            Toast.makeText(activity, "Please Input Item Name", Toast.LENGTH_SHORT).show()
             return
         }
         if (itemCatVal.equals(defaultVal)) {
@@ -284,9 +263,9 @@ class post_itemFragment : Fragment() {
 
     private fun uploadImageToStorage(dbRef: DocumentReference) {
         val fireStorageRef = FirebaseStorage.getInstance().getReference("itemImages/" + dbRef.id)
-        val bmp = MediaStore.Images.Media.getBitmap(activity!!.getContentResolver(), SELECTED_PHOTO_URI);
+        //val bmp = MediaStore.Images.Media.getBitmap(activity!!.getContentResolver(), SELECTED_PHOTO_URI);
         val baos = ByteArrayOutputStream();
-        bmp.compress(Bitmap.CompressFormat.JPEG, 25, baos);
+        newbmp!!.compress(Bitmap.CompressFormat.JPEG, 25, baos);
         val data = baos.toByteArray();
         //uploading the image
         fireStorageRef.putBytes(data)
@@ -323,7 +302,7 @@ class post_itemFragment : Fragment() {
         val item = Items(
             dbRef.id,
             userId,
-            itemNameVal,
+            itemName.text.toString(),
             itemBrandVal,
             itemCatVal,
             itemDesc.text.trim().toString(),
