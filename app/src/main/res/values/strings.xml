@@ -33,7 +33,7 @@
     <string name="my_items">My Items</string>
     <string name="post_item">Post item</string>
     <string name="category">Please select Category</string>
-    <string name="category_item">Category</string>
+    <string name="category_item">Item Category</string>
     <string name="brand">Brand</string>
     <string name="description">Description</string>
     <string name="end_time">End time</string>
@@ -47,6 +47,7 @@
     <string name="accepted">Accepted</string>
     <string name="type_message">Type Message</string>
     <string name="contact">Contact</string>
+    <string name="item_name_model"><![CDATA[Item Name & Model]]></string>
 
     // Items Name array
     <string-array name="item_name_array">
