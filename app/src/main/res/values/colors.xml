@@ -9,4 +9,8 @@
     <color name="backgroud_app_color">#4064BA</color>
     <color name="button_color">#7481C7</color>
     <color name="purple">#800080</color>
+    <color name="blue">#0000ff</color>
+    <color name="green">#228B22</color>
+    <color name="text_color">#86c5da</color>
+    <color name="amt_color">#da9b86</color>
 </resources>
