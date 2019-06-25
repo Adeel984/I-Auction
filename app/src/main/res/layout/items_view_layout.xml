@@ -6,10 +6,10 @@
     <androidx.cardview.widget.CardView android:layout_width="180dp"
                                        app:cardUseCompatPadding="true"
                                        app:cardCornerRadius="5dp"
+                                       android:background="#e8f4f8"
                                        android:layout_height="wrap_content" android:id="@+id/item_cardView">
         <androidx.constraintlayout.widget.ConstraintLayout android:layout_width="match_parent"
                                                            android:layout_height="match_parent">
-
 
             <ImageView
                     android:layout_width="120dp"
@@ -23,7 +23,7 @@
                     android:id="@+id/item_name_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textStyle="bold"
+                    android:textColor="@color/blue"
                     app:layout_constraintTop_toBottomOf="@+id/item_image_view"
                     app:layout_constraintStart_toStartOf="parent" android:layout_marginLeft="8dp"
                     android:layout_marginStart="8dp" app:layout_constraintEnd_toEndOf="parent"
@@ -96,7 +96,8 @@
                     app:layout_constraintTop_toBottomOf="@+id/item_name_view" android:layout_marginTop="8dp"/>
             <TextView
                     android:text="Item Category"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/item_status_view" android:layout_marginEnd="2dp" android:layout_marginRight="2dp"
