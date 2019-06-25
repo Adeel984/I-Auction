@@ -166,6 +166,10 @@ class bidder_HomeFragment : Fragment() {
         val minBidAmount = dialog.findViewById<TextView>(R.id.min_bid_amount_bidderView)
         val maxBidAmount = dialog.findViewById<TextView>(R.id.max_bid_amount_bidderView)
         val applyBid = dialog.findViewById<Button>(R.id.apply_bid)
+         val cancelBtn = dialog.findViewById<ImageButton>(R.id.cancel_btn)
+         cancelBtn.setOnClickListener {
+             dialog.dismiss()
+         }
         assuranceText = dialog.findViewById(R.id.assurance_bidder)
         val item: Items
         when (categorisedItems) {
